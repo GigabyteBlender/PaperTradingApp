@@ -15,39 +15,77 @@ type PortfolioTableProps = {
 export default function PortfolioTable({ rows, totalValue }: PortfolioTableProps) {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-lg shadow-sm">
+      <table className="min-w-full bg-white dark:bg-neutral-900 border-radius border-gray-200 dark:border-neutral-800 rounded-xl shadow-lg">
         <thead>
-          <tr>
-            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-800">Symbol</th>
-            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-800">Company</th>
-            <th className="px-4 py-2 text-right text-sm font-medium text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-800">Shares</th>
-            <th className="px-4 py-2 text-right text-sm font-medium text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-800">Price</th>
-            <th className="px-4 py-2 text-right text-sm font-medium text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-800">Value</th>
-            <th className="px-4 py-2 text-right text-sm font-medium text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-800">Change</th>
+          <tr className="bg-gray-100 dark:bg-neutral-800">
+            <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-800 rounded-tl-xl">
+              Symbol
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-800">
+              Company
+            </th>
+            <th className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-800">
+              Shares
+            </th>
+            <th className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-800">
+              Price
+            </th>
+            <th className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-800">
+              Value
+            </th>
+            <th className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-neutral-800 rounded-tr-xl">
+              Change
+            </th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
-            <tr key={row.symbol} className={row.symbol === 'GOOGL' ? 'bg-gray-50 dark:bg-neutral-950' : undefined}>
-              <td className="px-4 py-2 text-sm font-mono text-gray-900 dark:text-gray-100">{row.symbol}</td>
-              <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{row.company}</td>
-              <td className="px-4 py-2 text-sm text-right text-gray-700 dark:text-gray-200">{row.shares}</td>
-              <td className="px-4 py-2 text-sm text-right text-gray-700 dark:text-gray-200">{row.price}</td>
-              <td className="px-4 py-2 text-sm text-right text-gray-700 dark:text-gray-200">{row.value}</td>
-              <td className="px-4 py-2 text-sm text-right text-green-600 dark:text-green-400">{row.change}</td>
+          {rows.map((row, idx) => (
+            <tr
+              key={row.symbol}
+              className={`transition-colors duration-150 hover:bg-blue-50 dark:hover:bg-neutral-800`}
+            >
+              <td className="px-6 py-3 text-sm font-mono text-blue-700 dark:text-blue-300 whitespace-nowrap">
+                {row.symbol}
+              </td>
+              <td className="px-6 py-3 text-sm text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                {row.company}
+              </td>
+              <td className="px-6 py-3 text-sm text-right text-gray-700 dark:text-gray-200">
+                {row.shares}
+              </td>
+              <td className="px-6 py-3 text-sm text-right text-gray-700 dark:text-gray-200">
+                {row.price}
+              </td>
+              <td className="px-6 py-3 text-sm text-right text-gray-700 dark:text-gray-200">
+                {row.value}
+              </td>
+              <td
+                className={`px-6 py-3 text-sm text-right font-semibold ${
+                  row.change.startsWith("-")
+                    ? "text-red-600 dark:text-red-400"
+                    : "text-green-600 dark:text-green-400"
+                }`}
+              >
+                {row.change}
+              </td>
             </tr>
           ))}
         </tbody>
         <tfoot>
-          <tr>
-            <td colSpan={4} className="px-4 py-2 text-right text-sm font-semibold text-gray-900 dark:text-gray-100 border-t border-gray-200 dark:border-neutral-800">Total Value</td>
-            <td className="px-4 py-2 text-right text-sm font-semibold text-gray-900 dark:text-gray-100 border-t border-gray-200 dark:border-neutral-800">{totalValue}</td>
-            <td className="px-4 py-2 border-t border-gray-200 dark:border-neutral-800"></td>
+          <tr className="bg-gray-100 dark:bg-neutral-800">
+            <td
+              colSpan={4}
+              className="px-6 py-3 text-right text-base font-bold text-gray-900 dark:text-gray-100 border-t border-gray-200 dark:border-neutral-800 rounded-bl-xl"
+            >
+              Total Value
+            </td>
+            <td className="px-6 py-3 text-right text-base font-bold text-gray-900 dark:text-gray-100 border-t border-gray-200 dark:border-neutral-800">
+              {totalValue}
+            </td>
+            <td className="px-6 py-3 border-t border-gray-200 dark:border-neutral-800 rounded-br-xl"></td>
           </tr>
         </tfoot>
       </table>
     </div>
   );
 }
-
-
