@@ -30,6 +30,10 @@ export function BalanceProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   };
 
+  useEffect(() => {
+    loadBalance();
+  }, []);
+
   const updateBalance = (newBalance: number) => {
     saveBalance(newBalance);
     setBalance(newBalance);
@@ -45,10 +49,6 @@ export function BalanceProvider({ children }: { children: ReactNode }) {
     const savedBalance = getBalance();
     setBalance(savedBalance);
   };
-
-  useEffect(() => {
-    loadBalance();
-  }, []);
 
   return (
     <BalanceContext.Provider value={{ balance, isLoading, updateBalance, refreshBalance }}>

@@ -142,22 +142,22 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-neutral-900 rounded-lg p-6 w-full max-w-md mx-4">
+      <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 w-full max-w-md mx-4 border border-neutral-200 dark:border-neutral-700">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
             Trade {stock.symbol}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
           >
             ✕
           </button>
         </div>
 
         <div className="mb-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400">{stock.name}</p>
-          <p className="text-lg font-semibold text-gray-900 dark:text-white">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">{stock.name}</p>
+          <p className="text-lg font-semibold text-neutral-900 dark:text-white">
             {formatCurrency(stock.currentPrice)}
           </p>
           <p className={`text-sm ${stock.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -166,7 +166,7 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
             Trade Type
           </label>
           <div className="flex space-x-2">
@@ -175,7 +175,7 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
               className={`flex-1 py-2 px-4 rounded ${
                 tradeType === TransactionType.BUY
                   ? 'bg-green-600 text-white'
-                  : 'bg-gray-200 text-gray-700 dark:bg-neutral-700 dark:text-gray-300'
+                  : 'bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300'
               }`}
             >
               Buy
@@ -185,7 +185,7 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
               className={`flex-1 py-2 px-4 rounded ${
                 tradeType === TransactionType.SELL
                   ? 'bg-red-600 text-white'
-                  : 'bg-gray-200 text-gray-700 dark:bg-neutral-700 dark:text-gray-300'
+                  : 'bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300'
               }`}
               disabled={maxSellShares === 0}
             >
@@ -195,7 +195,7 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
             Shares
           </label>
           <input
@@ -204,26 +204,26 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
             max={tradeType === TransactionType.SELL ? maxSellShares : undefined}
             value={shares}
             onChange={(e) => setShares(Math.max(1, parseInt(e.target.value) || 1))}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-800 dark:text-white"
+            className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-700 dark:text-white"
           />
           {tradeType === TransactionType.SELL && (
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-neutral-500 mt-1">
               You own {maxSellShares} shares
             </p>
           )}
         </div>
 
         <div className="mb-6">
-          <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
+          <div className="flex justify-between text-sm text-neutral-600 dark:text-neutral-400 mb-2">
             <span>Total Cost:</span>
             <span>{formatCurrency(totalCost)}</span>
           </div>
-          <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
+          <div className="flex justify-between text-sm text-neutral-600 dark:text-neutral-400 mb-2">
             <span>Current Balance:</span>
             <span>{formatCurrency(balance || 0)}</span>
           </div>
           {tradeType === TransactionType.BUY && (
-            <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex justify-between text-sm text-neutral-600 dark:text-neutral-400">
               <span>After Trade:</span>
               <span>{formatCurrency((balance || 0) - totalCost)}</span>
             </div>
@@ -233,7 +233,7 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
         <div className="flex space-x-3">
           <button
             onClick={onClose}
-            className="flex-1 py-2 px-4 border border-gray-300 dark:border-neutral-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-neutral-800"
+            className="flex-1 py-2 px-4 border border-neutral-300 dark:border-neutral-600 rounded-md text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700"
           >
             Cancel
           </button>
@@ -242,8 +242,8 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
             disabled={!canAfford || !canSell || shares <= 0 || isProcessing}
             className={`flex-1 py-2 px-4 rounded-md text-white ${
               tradeType === TransactionType.BUY
-                ? 'bg-green-600 hover:bg-green-700 disabled:bg-gray-400'
-                : 'bg-red-600 hover:bg-red-700 disabled:bg-gray-400'
+                ? 'bg-green-600 hover:bg-green-700 disabled:bg-neutral-400'
+                : 'bg-red-600 hover:bg-red-700 disabled:bg-neutral-400'
             }`}
           >
             {isProcessing 

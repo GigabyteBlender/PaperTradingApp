@@ -1,12 +1,7 @@
-'use client';
-
 import { Geist, Geist_Mono } from "next/font/google";
-import { useState } from 'react';
-import { usePathname } from 'next/navigation';
 import "./globals.css";
-import Header from "@/app/dashboard/components/Header";
-import Sidebar from "@/app/dashboard/components/Sidebar";
 import { BalanceProvider } from "@/contexts/BalanceContext";
+import ClientLayout from "../components/ClientLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,13 +18,6 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
-  const [search, setSearch] = useState('');
-  const pathname = usePathname();
-
-  const showNavigation = pathname === '/dashboard' || 
-                         pathname?.startsWith('/market') || 
-                         pathname === '/settings';
-
   return (
     <html lang="en">
       <head>
@@ -38,19 +26,10 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning={true}
       >
         <BalanceProvider>
-          {showNavigation ? (
-            <div className="min-h-screen flex flex-col bg-white dark:bg-neutral-900">
-              <Header search={search} onSearchChange={setSearch} />
-              <div className="flex flex-1">
-                <Sidebar />
-                <main className="flex-1">{children}</main>
-              </div>
-            </div>
-          ) : (
-            children
-          )}
+          <ClientLayout>{children}</ClientLayout>
         </BalanceProvider>
       </body>
     </html>

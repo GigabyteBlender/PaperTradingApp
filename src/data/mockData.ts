@@ -1,14 +1,14 @@
-import { 
-  Portfolio, 
-  Holding, 
-  Stock, 
-  User, 
-  Recommendation, 
-  Transaction, 
-  MarketStatus, 
-  RecommendationAction, 
-  RiskLevel, 
-  TransactionType 
+import {
+  Portfolio,
+  Holding,
+  Stock,
+  User,
+  Recommendation,
+  Transaction,
+  MarketStatus,
+  RecommendationAction,
+  RiskLevel,
+  TransactionType
 } from '@/types';
 
 const MARKET_UPDATE_TIME = new Date('2024-10-16T15:30:00.000Z');

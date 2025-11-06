@@ -24,38 +24,3 @@ export const formatNumber = (num: number): string => {
   }
   return num.toString();
 };
-
-export const calculatePortfolioMetrics = (holdings: any[], currentPrices: { [symbol: string]: number }) => {
-  let totalValue = 0;
-  let totalInvested = 0;
-
-  const updatedHoldings = holdings.map(holding => {
-    const currentPrice = currentPrices[holding.symbol] || holding.currentPrice;
-    const currentValue = holding.shares * currentPrice;
-    const invested = holding.shares * holding.averageCost;
-    const unrealizedPL = currentValue - invested;
-    const unrealizedPLPercent = invested > 0 ? (unrealizedPL / invested) * 100 : 0;
-
-    totalValue += currentValue;
-    totalInvested += invested;
-
-    return {
-      ...holding,
-      currentPrice,
-      currentValue,
-      unrealizedPL,
-      unrealizedPLPercent
-    };
-  });
-
-  const profitLoss = totalValue - totalInvested;
-  const profitLossPercent = totalInvested > 0 ? (profitLoss / totalInvested) * 100 : 0;
-
-  return {
-    holdings: updatedHoldings,
-    totalValue,
-    totalInvested,
-    profitLoss,
-    profitLossPercent
-  };
-};
