@@ -27,7 +27,6 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
   const canSell = tradeType === TransactionType.SELL ? shares <= maxSellShares : true;
 
   const handleTrade = async () => {
-    if (!canAfford || !canSell || shares <= 0) return;
 
     setIsProcessing(true);
 
@@ -78,6 +77,7 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
             // Create new holding
             const newHolding: Holding = {
               symbol: stock.symbol,
+              companyName: stock.name,
               shares,
               averageCost: stock.currentPrice,
               currentPrice: stock.currentPrice,
@@ -129,8 +129,8 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
       }
 
       onTradeComplete();
-      onClose();
       setShares(1);
+      onClose();
     } catch (error) {
       console.error('Trade failed:', error);
     } finally {

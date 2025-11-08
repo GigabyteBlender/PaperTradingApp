@@ -15,7 +15,7 @@ export default function MarketPage() {
   const router = useRouter();
   const symbol = searchParams.get('symbol');
 
-  // Initialize stock data immediately - no loading state needed for mock data
+  // loading stock data
   const initializeStock = () => {
     if (symbol) {
       return mockStocks.find(s => s.symbol === symbol) || null;
@@ -79,7 +79,6 @@ export default function MarketPage() {
           <StockStats stock={stock} />
           <MarketStatus 
             stock={stock} 
-            onTradeClick={() => setIsTradeModalOpen(true)} 
           />
         </div>
       </div>

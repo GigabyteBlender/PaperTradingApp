@@ -11,7 +11,6 @@ interface StockChartProps {
 interface ChartData {
     time: string;
     price: number;
-    timestamp: number;
 }
 
 export default function StockChart({ stock }: StockChartProps) {
@@ -23,7 +22,7 @@ export default function StockChart({ stock }: StockChartProps) {
         let points = 50;
         let intervalMs = 60000; // 1 minute
 
-        // Adjust points and interval based on timeframe
+        // Adjusts points and intervals based on timeframe
         switch (timeframe) {
             case '1D':
                 points = 100; // More points for smoother line
@@ -48,7 +47,7 @@ export default function StockChart({ stock }: StockChartProps) {
         }
 
         let price = stock.currentPrice;
-        const volatility = stock.currentPrice * 0.015; // Slightly less volatile for smoother chart
+        const volatility = stock.currentPrice * 0.015;
 
         for (let i = points - 1; i >= 0; i--) {
             const timestamp = now.getTime() - i * intervalMs;
@@ -78,13 +77,9 @@ export default function StockChart({ stock }: StockChartProps) {
             
             data.push({
                 time: timeString,
-                price: Number(price.toFixed(2)),
-                timestamp
+                price: Number(price.toFixed(2))
             });
         }
-
-        // Ensure the last point is the current price
-        data[data.length - 1].price = stock.currentPrice;
 
         return data;
     };
@@ -93,7 +88,6 @@ export default function StockChart({ stock }: StockChartProps) {
 
     const isPositive = stock.change >= 0;
     const lineColor = isPositive ? '#10b981' : '#ef4444';
-    const fillColor = isPositive ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
 
     return (
         <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-md transition-shadow">
@@ -121,7 +115,7 @@ export default function StockChart({ stock }: StockChartProps) {
 
             <div className="w-full h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                    <AreaChart data={chartData} >
                         <defs>
                             <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor={lineColor} stopOpacity={0.3}/>
@@ -151,7 +145,7 @@ export default function StockChart({ stock }: StockChartProps) {
                             contentStyle={{
                                 backgroundColor: '#1f2937',
                                 border: 'none',
-                                borderRadius: '8px',
+                                borderRadius: '4px',
                                 color: '#f9fafb'
                             }}
                             formatter={(value: number) => [`$${value.toFixed(2)}`, 'Price']}

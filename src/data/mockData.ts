@@ -12,6 +12,7 @@ import {
 } from '@/types';
 
 const MARKET_UPDATE_TIME = new Date('2024-10-16T15:30:00.000Z');
+
 export const mockUser: User = {
   userId: 'user-123',
   username: 'john_trader',
@@ -187,6 +188,7 @@ export const mockStocks: Stock[] = [
 export const mockHoldings: Holding[] = [
   {
     symbol: 'AAPL',
+    companyName: 'Apple Inc.',
     shares: 10,
     averageCost: 175.00,
     currentPrice: 180.00,
@@ -197,6 +199,7 @@ export const mockHoldings: Holding[] = [
   },
   {
     symbol: 'GOOGL',
+    companyName: 'Alphabet Inc.',
     shares: 5,
     averageCost: 2850.00,
     currentPrice: 2800.00,
@@ -207,6 +210,7 @@ export const mockHoldings: Holding[] = [
   },
   {
     symbol: 'TSLA',
+    companyName: 'Tesla Inc.',
     shares: 2,
     averageCost: 680.00,
     currentPrice: 700.00,

@@ -5,11 +5,7 @@ import { Stock } from '@/types';
 import { mockStocks } from '@/data/mockData';
 import { formatCurrency, formatPercentage } from '@/utils/portfolio';
 
-interface StockSearchProps {
-  onStockSelect: (stock: Stock) => void;
-}
-
-export default function StockSearch({ onStockSelect }: StockSearchProps) {
+export default function StockSearch() {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<Stock[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -59,9 +55,9 @@ export default function StockSearch({ onStockSelect }: StockSearchProps) {
                 <button
                   key={stock.symbol}
                   onClick={() => {
-                    window.location.href = `/market?symbol=${stock.symbol}`;
                     setSearchTerm('');
                     setSearchResults([]);
+                    window.location.href = `/market?symbol=${stock.symbol}`;
                   }}
                   className="w-full px-4 py-3 text-left hover:bg-neutral-50 dark:hover:bg-neutral-800 border-b border-neutral-100 dark:border-neutral-700 last:border-b-0"
                 >

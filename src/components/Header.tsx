@@ -10,11 +10,11 @@ export default function Header() {
     <header className="w-full flex items-center justify-between px-8 py-6 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-700 sticky top-0 z-40">
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-neutral-800 to-black rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">ST</span>
-          </div>
           <span className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-            StockTrainer
+            Trading Simulator
+          </span>
+          <span className="text-sm text-neutral-500 dark:text-neutral-400">
+            v1.0.0
           </span>
         </div>
       </div>
@@ -28,7 +28,7 @@ export default function Header() {
         </div>
 
         <div className="w-60">
-          <StockSearch onStockSelect={() => {}} />
+          <StockSearch/>
         </div>
       </div>
     </header>

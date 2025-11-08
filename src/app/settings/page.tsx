@@ -10,7 +10,7 @@ import type { User as UserType } from '@/types';
 type EditingField = 'username' | 'email' | 'balance' | null;
 
 export default function SettingsPage() {
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUser] = useState<UserType>(mockUser);
   const [editingField, setEditingField] = useState<EditingField>(null);
   const [tempValue, setTempValue] = useState<string>('');
   const { refreshBalance } = useBalance();
@@ -22,13 +22,11 @@ export default function SettingsPage() {
     } else {
       // Initialize with mock user if no user exists
       saveUser(mockUser);
-      setUser(mockUser);
     }
   }, []);
 
 
   const handleEdit = (field: EditingField) => {
-    if (!user) return;
     setEditingField(field);
     if (field === 'username') setTempValue(user.username);
     else if (field === 'email') setTempValue(user.email);
@@ -36,8 +34,6 @@ export default function SettingsPage() {
   };
 
   const handleSave = (field: EditingField) => {
-    if (!user || !field) return;
-
     let updatedUser = { ...user };
 
     if (field === 'username') {
@@ -64,37 +60,6 @@ export default function SettingsPage() {
     setEditingField(null);
     setTempValue('');
   };
-
-  // Show loading state while loading user data
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-neutral-900">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="mb-8">
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              Manage your profile and account preferences
-            </p>
-          </div>
-          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-gray-200 dark:border-neutral-700 mb-6">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-neutral-700">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <User className="w-5 h-5 text-blue-600" />
-                Profile Information
-              </h2>
-            </div>
-            <div className="p-6">
-              <div className="animate-pulse space-y-6">
-                <div className="h-16 bg-gray-200 dark:bg-neutral-700 rounded-lg"></div>
-                <div className="h-16 bg-gray-200 dark:bg-neutral-700 rounded-lg"></div>
-                <div className="h-16 bg-gray-200 dark:bg-neutral-700 rounded-lg"></div>
-                <div className="h-16 bg-gray-200 dark:bg-neutral-700 rounded-lg"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-neutral-900">
@@ -127,7 +92,7 @@ export default function SettingsPage() {
               </div>
               <div className="bg-gray-50 dark:bg-neutral-700 px-4 py-3 rounded-lg border border-gray-200 dark:border-neutral-600">
                 <span className="font-mono text-sm text-gray-700 dark:text-gray-300">
-                  {user?.userId}
+                  {user.userId}
                 </span>
               </div>
             </div>
@@ -174,7 +139,7 @@ export default function SettingsPage() {
               ) : (
                 <div className="bg-gray-50 dark:bg-neutral-700 px-4 py-3 rounded-lg border border-gray-200 dark:border-neutral-600 group-hover:border-gray-300 dark:group-hover:border-neutral-500 transition-colors">
                   <span className="text-gray-900 dark:text-white">
-                    {user?.username}
+                    {user.username}
                   </span>
                 </div>
               )}
@@ -222,7 +187,7 @@ export default function SettingsPage() {
               ) : (
                 <div className="bg-gray-50 dark:bg-neutral-700 px-4 py-3 rounded-lg border border-gray-200 dark:border-neutral-600 group-hover:border-gray-300 dark:group-hover:border-neutral-500 transition-colors">
                   <span className="text-gray-900 dark:text-white">
-                    {user?.email}
+                    {user.email}
                   </span>
                 </div>
               )}
@@ -272,7 +237,7 @@ export default function SettingsPage() {
               ) : (
                 <div className="bg-gray-50 dark:bg-neutral-700 px-4 py-3 rounded-lg border border-gray-200 dark:border-neutral-600 group-hover:border-gray-300 dark:group-hover:border-neutral-500 transition-colors">
                   <span className="text-gray-900 dark:text-white font-semibold text-lg">
-                    ${user?.balance.toLocaleString()}
+                    ${user.balance.toLocaleString()}
                   </span>
                 </div>
               )}

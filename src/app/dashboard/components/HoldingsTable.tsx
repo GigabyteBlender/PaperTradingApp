@@ -16,11 +16,6 @@ export default function HoldingsTable({ portfolio, isLoading = false, onTradeCom
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
 
-  const getCompanyName = (symbol: string): string => {
-    const stock = mockStocks.find(s => s.symbol === symbol);
-    return stock?.name || symbol;
-  };
-
   const getStockData = (symbol: string): Stock | null => {
     return mockStocks.find(s => s.symbol === symbol) || null;
   };
@@ -113,7 +108,7 @@ export default function HoldingsTable({ portfolio, isLoading = false, onTradeCom
                   {holding.symbol}
                 </td>
                 <td className="px-6 py-4 text-sm text-neutral-700 dark:text-neutral-300 whitespace-nowrap">
-                  {getCompanyName(holding.symbol)}
+                  {holding.companyName}
                 </td>
                 <td className="px-6 py-4 text-sm text-left text-neutral-700 dark:text-neutral-300">
                   {holding.shares.toLocaleString()}
@@ -146,22 +141,7 @@ export default function HoldingsTable({ portfolio, isLoading = false, onTradeCom
           )}
         </tbody>
 
-        {!isLoading && portfolio && portfolio.holdings.length > 0 && (
-          <tfoot>
-            <tr className="bg-neutral-50 dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-700">
-              <td
-                colSpan={5}
-                className="px-6 py-4 text-right text-sm font-semibold text-neutral-700 dark:text-neutral-300"
-              >
-                Total Value
-              </td>
-              <td className="px-6 py-4 text-left text-sm font-bold text-neutral-900 dark:text-neutral-100">
-                {formatCurrency(portfolio.totalValue)}
-              </td>
-              <td className="px-6 py-4"></td>
-            </tr>
-          </tfoot>
-        )}
+
       </table>
 
       {selectedStock && (

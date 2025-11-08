@@ -80,6 +80,7 @@ export interface Transaction {
 
 export interface Holding {
   symbol: string;
+  companyName: string;
   shares: number;
   averageCost: number;
   currentPrice: number;
