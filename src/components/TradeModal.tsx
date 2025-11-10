@@ -14,10 +14,11 @@ interface TradeModalProps {
 }
 
 export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: TradeModalProps) {
+  //states
   const [tradeType, setTradeType] = useState<TransactionType>(TransactionType.BUY);
   const [shares, setShares] = useState<number>(1);
   const [isProcessing, setIsProcessing] = useState(false);
-
+  //variables
   const { balance, updateBalance } = useBalance();
   const portfolio = getPortfolio();
   const currentHolding = portfolio?.holdings.find(h => h.symbol === stock.symbol);

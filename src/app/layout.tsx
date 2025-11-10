@@ -27,7 +27,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
-      >
+      > 
         <BalanceProvider>
           <ClientLayout>{children}</ClientLayout>
         </BalanceProvider>

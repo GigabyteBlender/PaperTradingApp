@@ -49,10 +49,13 @@ export default function StockChart({ stock }: StockChartProps) {
 
         let price = stock.currentPrice;
         const volatility = stock.currentPrice * 0.015;
-
+        
+        // creating random points for the graph
         for (let i = points - 1; i >= 0; i--) {
+            // variables needed for the graphs
             const timestamp = now.getTime() - i * intervalMs;
             const date = new Date(timestamp);
+            // using volatility here to not have too sudden changes on my graph
             const change = (Math.random() - 0.5) * volatility;
             price = Math.max(price + change, stock.currentPrice * 0.7);
             

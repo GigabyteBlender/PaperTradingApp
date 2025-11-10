@@ -17,6 +17,7 @@ import {
 import { useBalance } from "@/contexts/BalanceContext";
 
 export default function Dashboard() {
+  // states used for data dislpayed on page and also tracking of componentes
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
@@ -138,22 +139,7 @@ export default function Dashboard() {
         transactions={transactions}
         isLoading={isTransactionsLoading}
       />
-
-      {selectedStock && (
-        <TradeModal
-          stock={selectedStock}
-          isOpen={isTradeModalOpen}
-          onClose={() => {
-            setIsTradeModalOpen(false);
-            setSelectedStock(null);
-          }}
-          onTradeComplete={() => {
-            handleTradeComplete();
-            setIsTradeModalOpen(false);
-            setSelectedStock(null);
-          }}
-        />
-      )}
+      
     </div>
   );
 }

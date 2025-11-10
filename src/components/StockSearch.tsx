@@ -23,6 +23,7 @@ export default function StockSearch() {
       stock.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
       stock.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    
     setSearchResults(results);
     setIsSearching(false);
   }, [searchTerm]);

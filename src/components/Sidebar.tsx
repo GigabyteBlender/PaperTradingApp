@@ -4,9 +4,6 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-neutral-50 dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-700 p-6 flex flex-col">
       <div className="mb-8">
-        <h2 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
-          Navigation
-        </h2>
         <nav className="flex flex-col gap-1">
           <a
             href="/dashboard"
