@@ -16,13 +16,14 @@ interface ChartData {
 export default function StockChart({ stock }: StockChartProps) {
     const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1D');
 
+    // Generate mock chart data based on selected timeframe
     const generateChartData = (timeframe: string): ChartData[] => {
         const now = new Date();
         const data: ChartData[] = [];
         let points = 50;
         let intervalMs = 60000; // 1 minute
 
-        // Adjusts points and intervals based on timeframe
+        // Adjust points and intervals based on timeframe
         switch (timeframe) {
             case '1D':
                 points = 100; // More points for smoother line

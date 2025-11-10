@@ -10,6 +10,7 @@ export default function StockSearch() {
   const [searchResults, setSearchResults] = useState<Stock[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
+  // Filter stocks by symbol or name when search term changes
   useEffect(() => {
     if (searchTerm.trim() === '') {
       setSearchResults([]);

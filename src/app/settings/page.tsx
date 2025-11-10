@@ -15,17 +15,17 @@ export default function SettingsPage() {
   const [tempValue, setTempValue] = useState<string>('');
   const { refreshBalance } = useBalance();
 
+  // Load user data from localStorage on mount
   useEffect(() => {
     const currentUser = getUser();
     if (currentUser) {
       setUser(currentUser);
     } else {
-      // Initialize with mock user if no user exists
       saveUser(mockUser);
     }
   }, []);
 
-
+  // Start editing a field and populate temp value
   const handleEdit = (field: EditingField) => {
     setEditingField(field);
     if (field === 'username') setTempValue(user.username);
@@ -33,6 +33,7 @@ export default function SettingsPage() {
     else if (field === 'balance') setTempValue(user.balance.toString());
   };
 
+  // Save edited field to localStorage and update context
   const handleSave = (field: EditingField) => {
     let updatedUser = { ...user };
 
@@ -45,7 +46,7 @@ export default function SettingsPage() {
       if (!isNaN(numValue) && numValue >= 0) {
         updatedUser.balance = numValue;
       } else {
-        return; // Invalid number, don't save
+        return;
       }
     }
 
@@ -56,6 +57,7 @@ export default function SettingsPage() {
     refreshBalance();
   };
 
+  // Cancel editing and clear temp value
   const handleCancel = () => {
     setEditingField(null);
     setTempValue('');

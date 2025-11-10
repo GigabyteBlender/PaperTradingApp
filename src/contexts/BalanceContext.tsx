@@ -17,8 +17,8 @@ export function BalanceProvider({ children }: { children: ReactNode }) {
   const [balance, setBalance] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Load user balance from localStorage
   const loadBalance = () => {
-    // Initialize user data if it doesn't exist
     let user = getUser();
     if (!user) {
       saveUser(mockUser);
@@ -30,17 +30,19 @@ export function BalanceProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   };
 
+  // Load balance on mount
   useEffect(() => {
     loadBalance();
   }, []);
 
+  // Update balance in localStorage and state
   const updateBalance = (newBalance: number) => {
     saveBalance(newBalance);
     setBalance(newBalance);
   };
 
+  // Refresh balance from localStorage
   const refreshBalance = () => {
-    // Ensure user data exists
     let user = getUser();
     if (!user) {
       saveUser(mockUser);

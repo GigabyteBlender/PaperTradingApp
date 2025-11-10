@@ -6,12 +6,14 @@ const STORAGE_KEYS = {
   TRANSACTIONS: 'trading_app_transactions'
 } as const;
 
+// Save user data to localStorage
 export const saveUser = (user: User): void => {
   if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
   }
 };
 
+// Get user data from localStorage
 export const getUser = (): User | null => {
   if (typeof window !== 'undefined') {
     const userData = localStorage.getItem(STORAGE_KEYS.USER);
@@ -19,12 +21,15 @@ export const getUser = (): User | null => {
   }
   return null;
 };
+
+// Save portfolio to localStorage
 export const savePortfolio = (portfolio: Portfolio): void => {
   if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEYS.PORTFOLIO, JSON.stringify(portfolio));
   }
 };
 
+// Get portfolio from localStorage and parse dates
 export const getPortfolio = (): Portfolio | null => {
   if (typeof window !== 'undefined') {
     const portfolioData = localStorage.getItem(STORAGE_KEYS.PORTFOLIO);
@@ -42,12 +47,14 @@ export const getPortfolio = (): Portfolio | null => {
   return null;
 };
 
+// Save transactions array to localStorage
 export const saveTransactions = (transactions: Transaction[]): void => {
   if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
   }
 };
 
+// Get transactions from localStorage and parse dates
 export const getTransactions = (): Transaction[] => {
   if (typeof window !== 'undefined') {
     const transactionsData = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
@@ -62,12 +69,14 @@ export const getTransactions = (): Transaction[] => {
   return [];
 };
 
+// Add new transaction to existing transactions
 export const addTransaction = (transaction: Transaction): void => {
   const transactions = getTransactions();
   transactions.push(transaction);
   saveTransactions(transactions);
 };
 
+// Update user balance in localStorage
 export const saveBalance = (balance: number): void => {
   if (typeof window !== 'undefined') {
     const user = getUser();
@@ -78,6 +87,7 @@ export const saveBalance = (balance: number): void => {
   }
 };
 
+// Get user balance from localStorage
 export const getBalance = (): number => {
   if (typeof window !== 'undefined') {
     const user = getUser();
@@ -85,6 +95,8 @@ export const getBalance = (): number => {
   }
   return 25000;
 };
+
+// Clear all app data from localStorage
 export const clearAllData = (): void => {
   if (typeof window !== 'undefined') {
     Object.values(STORAGE_KEYS).forEach(key => {

@@ -8,11 +8,13 @@ interface TransactionsTableProps {
 }
 
 export default function TransactionsTable({ transactions, isLoading = false }: TransactionsTableProps) {
+  // Get company name from mock data by symbol
   const getCompanyName = (symbol: string): string => {
     const stock = mockStocks.find(s => s.symbol === symbol);
     return stock?.name || symbol;
   };
 
+  // Format date to consistent string format
   const formatDateTime = (date: Date | string): string => {
     try {
       const dateObj = typeof date === 'string' ? new Date(date) : date;

@@ -25,12 +25,14 @@ export default function Dashboard() {
   const [isTransactionsLoading, setIsTransactionsLoading] = useState(true);
   const { balance, isLoading: isBalanceLoading, updateBalance } = useBalance();
 
+  // Load portfolio and transaction data from localStorage on mount
   useEffect(() => {
     const loadData = () => {
       const savedPortfolio = getPortfolio();
       const savedTransactions = getTransactions();
 
       if (savedPortfolio) {
+        // Load existing user data from localStorage
         setPortfolio(savedPortfolio);
         setIsPortfolioLoading(false);
 
@@ -53,6 +55,7 @@ export default function Dashboard() {
     loadData();
   }, [updateBalance]);
 
+  // Refresh data after trade completion
   const handleTradeComplete = () => {
     const updatedPortfolio = getPortfolio();
     const updatedTransactions = getTransactions();

@@ -26,12 +26,12 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
   const canAfford = tradeType === TransactionType.BUY ? totalCost <= (balance || 0) : true;
   const canSell = tradeType === TransactionType.SELL ? shares <= maxSellShares : true;
 
+  // Execute buy or sell trade and update portfolio
   const handleTrade = async () => {
-
     setIsProcessing(true);
 
     try {
-      // Create transaction
+      // Create transaction record
       const transaction: Transaction = {
         transactionId: `txn-${Date.now()}`,
         userId: 'user-123',

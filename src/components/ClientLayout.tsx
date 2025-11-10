@@ -11,6 +11,7 @@ interface ClientLayoutProps {
 export default function ClientLayout({ children }: ClientLayoutProps) {
   const pathname = usePathname();
 
+  // Show header and sidebar for main app pages
   const showNavigation = pathname === '/dashboard' || 
                          pathname?.startsWith('/market') || 
                          pathname === '/settings';

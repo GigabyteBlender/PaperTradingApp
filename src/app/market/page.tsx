@@ -15,7 +15,7 @@ export default function MarketPage() {
   const router = useRouter();
   const symbol = searchParams.get('symbol');
 
-  // loading stock data
+  // Find stock data from mock data by symbol
   const initializeStock = () => {
     if (symbol) {
       return mockStocks.find(s => s.symbol === symbol) || null;
@@ -27,6 +27,7 @@ export default function MarketPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
 
+  // Redirect to dashboard if no symbol provided
   useEffect(() => {
     if (!symbol) {
       router.push('/dashboard');

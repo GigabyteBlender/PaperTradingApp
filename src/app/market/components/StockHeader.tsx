@@ -10,7 +10,6 @@ interface StockHeaderProps {
 }
 
 export default function StockHeader({ stock, onTradeClick }: StockHeaderProps) {
-  const router = useRouter();
 
   return (
     <div className="mb-8">

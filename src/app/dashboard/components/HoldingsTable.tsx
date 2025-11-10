@@ -16,10 +16,12 @@ export default function HoldingsTable({ portfolio, isLoading = false, onTradeCom
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
 
+  // Get full stock data from mock data by symbol
   const getStockData = (symbol: string): Stock | null => {
     return mockStocks.find(s => s.symbol === symbol) || null;
   };
 
+  // Open trade modal for selected stock
   const handleTradeClick = (symbol: string) => {
     const stock = getStockData(symbol);
     if (stock) {
@@ -28,6 +30,7 @@ export default function HoldingsTable({ portfolio, isLoading = false, onTradeCom
     }
   };
 
+  // Navigate to stock detail page
   const handleViewStock = (symbol: string) => {
     window.location.href = `/market?symbol=${symbol}`;
   };
