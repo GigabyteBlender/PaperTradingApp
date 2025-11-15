@@ -1,33 +1,48 @@
 'use client';
 
 import { useState } from 'react';
-import { Portfolio, Stock } from '@/types';
+import { Stock } from '@/types';
 import { formatCurrency, formatPercentage } from '@/utils/portfolio';
-import { mockStocks } from '@/data/mockData';
 import TradeModal from '@/components/TradeModal';
+import type { PortfolioResponse, HoldingResponse } from '@/lib/api/types';
 
 interface HoldingsTableProps {
-  portfolio: Portfolio | null;
+  portfolio: PortfolioResponse | null;
   isLoading?: boolean;
   onTradeComplete: () => void;
 }
 
+/**
+ * HoldingsTable displays user portfolio holdings.
+ * Data is fetched from backend API - no longer uses mock data.
+ */
 export default function HoldingsTable({ portfolio, isLoading = false, onTradeComplete }: HoldingsTableProps) {
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
 
-  // Get full stock data from mock data by symbol
-  const getStockData = (symbol: string): Stock | null => {
-    return mockStocks.find(s => s.symbol === symbol) || null;
+  const convertHoldingToStock = (holding: HoldingResponse): Stock => {
+    return {
+      symbol: holding.symbol,
+      name: holding.company_name,
+      currentPrice: holding.current_price,
+      previousClose: holding.average_cost,
+      change: holding.current_price - holding.average_cost,
+      changePercent: holding.unrealized_pl_percent,
+      lastUpdate: new Date(holding.purchased_at),
+      marketStatus: 'OPEN' as any,
+      volume: 0,
+      dayHigh: holding.current_price,
+      dayLow: holding.current_price,
+      marketCap: 0,
+      peRatio: 0,
+      dividendYield: 0
+    };
   };
 
-  // Open trade modal for selected stock
-  const handleTradeClick = (symbol: string) => {
-    const stock = getStockData(symbol);
-    if (stock) {
-      setSelectedStock(stock);
-      setIsTradeModalOpen(true);
-    }
+  const handleTradeClick = (holding: HoldingResponse) => {
+    const stock = convertHoldingToStock(holding);
+    setSelectedStock(stock);
+    setIsTradeModalOpen(true);
   };
 
   // Navigate to stock detail page
@@ -112,28 +127,28 @@ export default function HoldingsTable({ portfolio, isLoading = false, onTradeCom
                     {holding.symbol}
                   </td>
                   <td className="hidden sm:table-cell px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-neutral-700 dark:text-neutral-300 whitespace-nowrap">
-                    {holding.companyName}
+                    {holding.company_name}
                   </td>
                   <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-left text-neutral-700 dark:text-neutral-300">
                     {holding.shares.toLocaleString()}
                   </td>
                   <td className="hidden lg:table-cell px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-left text-neutral-700 dark:text-neutral-300">
-                    {formatCurrency(holding.currentPrice)}
+                    {formatCurrency(holding.current_price)}
                   </td>
                   <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-left text-neutral-900 dark:text-neutral-100 font-semibold">
-                    {formatCurrency(holding.currentValue)}
+                    {formatCurrency(holding.current_value)}
                   </td>
-                  <td className={`px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-left font-semibold ${holding.unrealizedPL < 0
+                  <td className={`px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-left font-semibold ${holding.unrealized_pl < 0
                     ? "text-red-600 dark:text-red-400"
                     : "text-green-600 dark:text-green-400"
                     }`}>
-                    {formatPercentage(holding.unrealizedPLPercent)}
+                    {formatPercentage(holding.unrealized_pl_percent)}
                   </td>
                   <td className="hidden md:table-cell px-3 md:px-6 py-3 md:py-4 text-center">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleTradeClick(holding.symbol);
+                        handleTradeClick(holding);
                       }}
                       className="bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-white px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 hover:shadow-sm"
                     >

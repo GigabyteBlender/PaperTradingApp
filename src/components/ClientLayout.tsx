@@ -13,10 +13,13 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Show header and sidebar for main app pages
-  const showNavigation = pathname === '/dashboard' || 
-                         pathname === '/market' || 
-                         pathname === '/settings';
+  // Show header and sidebar for main app pages (exclude auth pages)
+  const isAuthPage = pathname === '/login' || pathname === '/signup';
+  const showNavigation = !isAuthPage && (
+    pathname === '/dashboard' || 
+    pathname === '/market' || 
+    pathname === '/settings'
+  );
 
   if (showNavigation) {
     return (

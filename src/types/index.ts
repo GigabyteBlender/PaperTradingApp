@@ -5,27 +5,9 @@ export enum MarketStatus {
   AFTER_HOURS = 'AFTER_HOURS'
 }
 
-export enum RecommendationAction {
-  BUY = 'BUY',
-  SELL = 'SELL',
-  HOLD = 'HOLD'
-}
-
-export enum RiskLevel {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH'
-}
-
 export enum TransactionType {
   BUY = 'BUY',
   SELL = 'SELL'
-}
-
-export enum SearchType {
-  SYMBOL = 'SYMBOL',
-  COMPANY_NAME = 'COMPANY_NAME',
-  MIXED = 'MIXED'
 }
 
 export interface User {
@@ -50,21 +32,6 @@ export interface Stock {
   marketCap: number;
   peRatio: number;
   dividendYield: number;
-}
-
-export interface Recommendation {
-  recommendationId: string;
-  userId: string;
-  symbol: string;
-  action: RecommendationAction;
-  confidence: number;
-  reasoning: string;
-  riskLevel: RiskLevel;
-  targetPrice: number;
-  currentPrice: number;
-  potentialGain: number;
-  createdAt: Date;
-  expiresAt: Date;
 }
 
 export interface Transaction {
@@ -96,12 +63,4 @@ export interface Portfolio {
   profitLoss: number;
   profitLossPercent: number;
   holdings: Holding[];
-}
-
-export interface Search {
-  searchTerm: string;
-  results: Stock[];
-  count: number;
-  searchType: SearchType;
-  isLoading: boolean;
 }

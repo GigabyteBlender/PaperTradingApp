@@ -1,18 +1,16 @@
-import { Transaction, TransactionType } from '@/types';
 import { formatCurrency } from '@/utils/portfolio';
-import { mockStocks } from '@/data/mockData';
+import type { TransactionResponse } from '@/lib/api/types';
 
 interface TransactionsTableProps {
-  transactions: Transaction[];
+  transactions: TransactionResponse[];
   isLoading?: boolean;
 }
 
+/**
+ * TransactionsTable displays user transaction history.
+ * Data is fetched from backend API - no longer uses mock data.
+ */
 export default function TransactionsTable({ transactions, isLoading = false }: TransactionsTableProps) {
-  // Get company name from mock data by symbol
-  const getCompanyName = (symbol: string): string => {
-    const stock = mockStocks.find(s => s.symbol === symbol);
-    return stock?.name || symbol;
-  };
 
   // Format date to consistent string format
   const formatDateTime = (date: Date | string): string => {
@@ -102,7 +100,7 @@ export default function TransactionsTable({ transactions, isLoading = false }: T
               // Actual transactions data
               transactions.map((transaction) => (
                 <tr
-                  key={transaction.transactionId}
+                  key={transaction.id}
                   className="hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all duration-200 hover:shadow-sm group"
                 >
                   <td className="hidden md:table-cell px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-neutral-700 dark:text-neutral-300 whitespace-nowrap">
@@ -110,7 +108,7 @@ export default function TransactionsTable({ transactions, isLoading = false }: T
                   </td>
                   <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm whitespace-nowrap">
                     <span className={`inline-flex px-2 md:px-3 py-0.5 md:py-1 text-xs font-semibold rounded-full ${
-                      transaction.type === TransactionType.BUY
+                      transaction.type === 'BUY'
                         ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
                         : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
                     }`}>
@@ -121,7 +119,7 @@ export default function TransactionsTable({ transactions, isLoading = false }: T
                     {transaction.symbol}
                   </td>
                   <td className="hidden lg:table-cell px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-neutral-700 dark:text-neutral-300 whitespace-nowrap">
-                    {getCompanyName(transaction.symbol)}
+                    {transaction.symbol}
                   </td>
                   <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-left text-neutral-700 dark:text-neutral-300">
                     {transaction.shares}
@@ -130,7 +128,7 @@ export default function TransactionsTable({ transactions, isLoading = false }: T
                     {formatCurrency(transaction.price)}
                   </td>
                   <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-left font-semibold text-neutral-900 dark:text-neutral-100">
-                    {formatCurrency(transaction.totalCost)}
+                    {formatCurrency(transaction.total_cost)}
                   </td>
                 </tr>
               ))

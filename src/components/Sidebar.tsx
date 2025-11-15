@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart3, Settings, X } from "lucide-react";
+import { BarChart3, X } from "lucide-react";
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -47,15 +47,6 @@ export default function Sidebar({ isOpen = true, onClose }: SidebarProps) {
                 <BarChart3 className="w-4 h-4 text-neutral-700 dark:text-neutral-300 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
               </div>
               Dashboard
-            </a>
-            <a
-              href="/settings"
-              className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-700 dark:text-neutral-200 hover:bg-white dark:hover:bg-neutral-800 hover:shadow-sm transition-all duration-200 font-medium"
-            >
-              <div className="p-1.5 rounded-lg bg-neutral-200 dark:bg-neutral-700 group-hover:bg-neutral-300 dark:group-hover:bg-neutral-600 transition-colors">
-                <Settings className="w-4 h-4 text-neutral-700 dark:text-neutral-300" />
-              </div>
-              Settings
             </a>
           </nav>
         </div>

@@ -1,31 +1,60 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Stock } from '@/types';
-import { mockStocks } from '@/data/mockData';
+import { Stock, MarketStatus } from '@/types';
 import { formatCurrency, formatPercentage } from '@/utils/portfolio';
+import { searchStocks } from '@/lib/api/stocks';
 
 export default function StockSearch() {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<Stock[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Filter stocks by symbol or name when search term changes
+  // Search stocks via API when search term changes
   useEffect(() => {
     if (searchTerm.trim() === '') {
       setSearchResults([]);
+      setError(null);
       return;
     }
 
-    setIsSearching(true);
-    
-    const results = mockStocks.filter(stock => 
-      stock.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      stock.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    
-    setSearchResults(results);
-    setIsSearching(false);
+    const searchTimeout = setTimeout(async () => {
+      setIsSearching(true);
+      setError(null);
+      
+      try {
+        const results = await searchStocks(searchTerm, 10);
+        
+        // Transform API response to Stock type
+        const transformedResults: Stock[] = results.map(result => ({
+          symbol: result.symbol,
+          name: result.name,
+          currentPrice: result.current_price,
+          previousClose: result.current_price - result.change,
+          change: result.change,
+          changePercent: result.change_percent,
+          lastUpdate: new Date(),
+          marketStatus: MarketStatus.OPEN,
+          volume: 0,
+          dayHigh: 0,
+          dayLow: 0,
+          marketCap: 0,
+          peRatio: 0,
+          dividendYield: 0,
+        }));
+        
+        setSearchResults(transformedResults);
+      } catch (err) {
+        console.error('Stock search error:', err);
+        setError('Failed to search stocks. Please try again.');
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(searchTimeout);
   }, [searchTerm]);
 
   return (
@@ -50,6 +79,10 @@ export default function StockSearch() {
           {isSearching ? (
             <div className="p-4 text-center text-neutral-500 dark:text-neutral-400">
               Searching...
+            </div>
+          ) : error ? (
+            <div className="p-4 text-center text-xs md:text-sm text-red-600 dark:text-red-400">
+              {error}
             </div>
           ) : searchResults.length > 0 ? (
             <div className="py-1 md:py-2">

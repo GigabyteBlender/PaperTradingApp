@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Stock, TransactionType, Transaction, Holding } from '@/types';
+import { Stock, TransactionType } from '@/types';
 import { formatCurrency } from '@/utils/portfolio';
-import { addTransaction, getPortfolio, savePortfolio } from '@/utils/localStorage';
 import { useBalance } from '@/contexts/BalanceContext';
+import { usePortfolio } from '@/contexts/PortfolioContext';
+import { createTransaction } from '@/lib/api/transactions';
+import type { TransactionCreateRequest } from '@/lib/api/types';
 
 interface TradeModalProps {
   stock: Stock;
@@ -14,126 +16,65 @@ interface TradeModalProps {
 }
 
 export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: TradeModalProps) {
-  //states
   const [tradeType, setTradeType] = useState<TransactionType>(TransactionType.BUY);
   const [shares, setShares] = useState<number>(1);
   const [isProcessing, setIsProcessing] = useState(false);
-  //variables
-  const { balance, updateBalance } = useBalance();
-  const portfolio = getPortfolio();
-  const currentHolding = portfolio?.holdings.find(h => h.symbol === stock.symbol);
+  const [error, setError] = useState<string | null>(null);
+  
+  const { balance, updateBalance, refreshBalance } = useBalance();
+  const { holdings, refreshPortfolio } = usePortfolio();
+  
+  const currentHolding = holdings.find(h => h.symbol === stock.symbol);
   const maxSellShares = currentHolding?.shares || 0;
   const totalCost = shares * stock.currentPrice;
   const canAfford = tradeType === TransactionType.BUY ? totalCost <= (balance || 0) : true;
   const canSell = tradeType === TransactionType.SELL ? shares <= maxSellShares : true;
 
-  // Execute buy or sell trade and update portfolio
+  /**
+   * Execute buy or sell transaction via API.
+   * Transaction flow:
+   * 1. Send transaction request to backend
+   * 2. Backend atomically updates balance, holdings, and creates transaction record
+   * 3. Update local state with new balance from response
+   * 4. Refresh portfolio and balance to sync with backend
+   * 5. Close modal and notify parent component
+   */
   const handleTrade = async () => {
     setIsProcessing(true);
+    setError(null);
 
     try {
-      // Create transaction record
-      const transaction: Transaction = {
-        transactionId: `txn-${Date.now()}`,
-        userId: 'user-123',
-        type: tradeType,
+      // Create transaction request payload
+      const transactionData: TransactionCreateRequest = {
+        type: tradeType === TransactionType.BUY ? 'BUY' : 'SELL',
         symbol: stock.symbol,
         shares,
         price: stock.currentPrice,
-        totalCost,
-        timestamp: new Date()
+        company_name: stock.name,
       };
 
-      // Update balance
-      const newBalance = tradeType === TransactionType.BUY
-        ? (balance || 0) - totalCost
-        : (balance || 0) + totalCost;
-      updateBalance(newBalance);
+      // Execute transaction via API - backend handles all updates atomically
+      const response = await createTransaction(transactionData);
 
-      // Add transaction to history
-      addTransaction(transaction);
+      // Update local balance state immediately for responsive UI
+      updateBalance(response.updated_balance);
 
-      // Update portfolio
-      if (portfolio) {
-        const updatedHoldings = [...portfolio.holdings];
-        const existingHoldingIndex = updatedHoldings.findIndex(h => h.symbol === stock.symbol);
+      // Refresh portfolio and balance from backend to ensure consistency
+      await Promise.all([
+        refreshPortfolio(),
+        refreshBalance(),
+      ]);
 
-        if (tradeType === TransactionType.BUY) {
-          if (existingHoldingIndex >= 0) {
-            // Update existing holding
-            const existing = updatedHoldings[existingHoldingIndex];
-            const newShares = existing.shares + shares;
-            const newAverageCost = ((existing.averageCost * existing.shares) + totalCost) / newShares;
-
-            updatedHoldings[existingHoldingIndex] = {
-              ...existing,
-              shares: newShares,
-              averageCost: newAverageCost,
-              currentPrice: stock.currentPrice,
-              currentValue: newShares * stock.currentPrice,
-              unrealizedPL: (stock.currentPrice - newAverageCost) * newShares,
-              unrealizedPLPercent: ((stock.currentPrice - newAverageCost) / newAverageCost) * 100
-            };
-          } else {
-            // Create new holding
-            const newHolding: Holding = {
-              symbol: stock.symbol,
-              companyName: stock.name,
-              shares,
-              averageCost: stock.currentPrice,
-              currentPrice: stock.currentPrice,
-              currentValue: totalCost,
-              unrealizedPL: 0,
-              unrealizedPLPercent: 0,
-              purchasedAt: new Date()
-            };
-            updatedHoldings.push(newHolding);
-          }
-        } else {
-          // Sell shares
-          if (existingHoldingIndex >= 0) {
-            const existing = updatedHoldings[existingHoldingIndex];
-            const newShares = existing.shares - shares;
-
-            if (newShares <= 0) {
-              // Remove holding if all shares sold
-              updatedHoldings.splice(existingHoldingIndex, 1);
-            } else {
-              // Update holding with remaining shares
-              updatedHoldings[existingHoldingIndex] = {
-                ...existing,
-                shares: newShares,
-                currentValue: newShares * stock.currentPrice,
-                unrealizedPL: (stock.currentPrice - existing.averageCost) * newShares,
-                unrealizedPLPercent: ((stock.currentPrice - existing.averageCost) / existing.averageCost) * 100
-              };
-            }
-          }
-        }
-
-        // Calculate new portfolio totals
-        const totalValue = updatedHoldings.reduce((sum, holding) => sum + holding.currentValue, 0);
-        const totalInvested = updatedHoldings.reduce((sum, holding) => sum + (holding.averageCost * holding.shares), 0);
-        const profitLoss = totalValue - totalInvested;
-        const profitLossPercent = totalInvested > 0 ? (profitLoss / totalInvested) * 100 : 0;
-
-        const updatedPortfolio = {
-          ...portfolio,
-          totalValue,
-          totalInvested,
-          profitLoss,
-          profitLossPercent,
-          holdings: updatedHoldings
-        };
-
-        savePortfolio(updatedPortfolio);
-      }
-
-      onTradeComplete();
+      // Reset form and close modal
       setShares(1);
+      setError(null);
+      onTradeComplete();
       onClose();
-    } catch (error) {
-      console.error('Trade failed:', error);
+    } catch (err) {
+      // Handle API errors with user-friendly messages
+      const errorMessage = err instanceof Error ? err.message : 'Transaction failed. Please try again.';
+      setError(errorMessage);
+      console.error('Trade failed:', err);
     } finally {
       setIsProcessing(false);
     }
@@ -259,6 +200,9 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
         )}
         {!canSell && tradeType === TransactionType.SELL && (
           <p className="text-red-600 dark:text-red-400 text-xs md:text-sm mt-2 text-center">Not enough shares to sell</p>
+        )}
+        {error && (
+          <p className="text-red-600 dark:text-red-400 text-xs md:text-sm mt-2 text-center">{error}</p>
         )}
       </div>
     </div>

@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { formatCurrency } from "@/utils/portfolio";
 import StockSearch from "@/components/StockSearch";
 import { useBalance } from "@/contexts/BalanceContext";
-import { Menu, Search, X } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Menu, Search, X, User, LogOut } from "lucide-react";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -12,7 +13,13 @@ interface HeaderProps {
 
 export default function Header({ onMenuClick }: HeaderProps) {
   const { balance, isLoading } = useBalance();
+  const { user, logout } = useAuth();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <>
@@ -60,6 +67,48 @@ export default function Header({ onMenuClick }: HeaderProps) {
           <div className="hidden md:block w-60">
             <StockSearch/>
           </div>
+
+          {/* User menu */}
+          {user && (
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-2 p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+                aria-label="User menu"
+              >
+                <User className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+                <span className="hidden md:inline text-sm text-neutral-700 dark:text-neutral-300">
+                  {user.username}
+                </span>
+              </button>
+
+              {showUserMenu && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowUserMenu(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700 z-50">
+                    <div className="p-3 border-b border-neutral-200 dark:border-neutral-700">
+                      <p className="text-sm font-medium text-neutral-900 dark:text-white">
+                        {user.username}
+                      </p>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </header>
 

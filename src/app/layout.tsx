@@ -1,6 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { BalanceProvider } from "@/contexts/BalanceContext";
+import { PortfolioProvider } from "@/contexts/PortfolioContext";
 import ClientLayout from "../components/ClientLayout";
 
 const geistSans = Geist({
@@ -28,9 +30,13 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
       > 
-        <BalanceProvider>
-          <ClientLayout>{children}</ClientLayout>
-        </BalanceProvider>
+        <AuthProvider>
+          <BalanceProvider>
+            <PortfolioProvider>
+              <ClientLayout>{children}</ClientLayout>
+            </PortfolioProvider>
+          </BalanceProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Stock } from '@/types';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { getStockHistory } from '@/lib/api/stocks';
 
 interface StockChartProps {
     stock: Stock;
@@ -14,81 +15,71 @@ interface ChartData {
 }
 
 export default function StockChart({ stock }: StockChartProps) {
-    const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1D');
+    const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1M');
+    const [chartData, setChartData] = useState<ChartData[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    // Generate mock chart data based on selected timeframe
-    const generateChartData = (timeframe: string, currentPrice: number): ChartData[] => {
-        const now = new Date();
-        const data: ChartData[] = [];
-        let points = 50;
-        let intervalMs = 60000; // 1 minute
-
-        // Adjust points and intervals based on timeframe
-        switch (timeframe) {
-            case '1D':
-                points = 100; // More points for smoother line
-                intervalMs = 300000; // 5 minutes
-                break;
-            case '1W':
-                points = 35; // 5 days * 7 hours
-                intervalMs = 3600000; // 1 hour
-                break;
-            case '1M':
-                points = 30; // 30 days
-                intervalMs = 86400000; // 1 day
-                break;
-            case '3M':
-                points = 90; // 90 days
-                intervalMs = 86400000; // 1 day
-                break;
-            case '1Y':
-                points = 52; // 52 weeks
-                intervalMs = 604800000; // 1 week
-                break;
-        }
-
-        let price = currentPrice;
-        const volatility = currentPrice * 0.015;
-        
-        // creating random points for the graph
-        for (let i = points - 1; i >= 0; i--) {
-            // variables needed for the graphs
-            const timestamp = now.getTime() - i * intervalMs;
-            const date = new Date(timestamp);
-            // using volatility here to not have too sudden changes on my graph
-            const change = (Math.random() - 0.5) * volatility;
-            price = Math.max(price + change, currentPrice * 0.7);
+    // Fetch historical data from API when timeframe or stock changes
+    useEffect(() => {
+        const fetchHistoricalData = async () => {
+            setIsLoading(true);
+            setError(null);
             
-            // Format time based on timeframe
-            let timeString = '';
-            if (timeframe === '1D') {
-                timeString = date.toLocaleTimeString('en-US', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    hour12: false 
+            try {
+                // Map UI timeframe to API period
+                const periodMap: Record<string, '1d' | '5d' | '1mo' | '3mo' | '1y' | '5y'> = {
+                    '1D': '1d',
+                    '1W': '5d',
+                    '1M': '1mo',
+                    '3M': '3mo',
+                    '1Y': '1y',
+                };
+                
+                const period = periodMap[timeframe];
+                const history = await getStockHistory(stock.symbol, period);
+                
+                // Transform API response to chart data
+                const transformed: ChartData[] = history.map(item => {
+                    const date = new Date(item.date);
+                    let timeString = '';
+                    
+                    // Format time based on timeframe
+                    if (timeframe === '1D') {
+                        timeString = date.toLocaleTimeString('en-US', { 
+                            hour: '2-digit', 
+                            minute: '2-digit',
+                            hour12: false 
+                        });
+                    } else if (timeframe === '1W') {
+                        timeString = date.toLocaleDateString('en-US', { 
+                            weekday: 'short',
+                            hour: '2-digit'
+                        });
+                    } else {
+                        timeString = date.toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric' 
+                        });
+                    }
+                    
+                    return {
+                        time: timeString,
+                        price: item.close,
+                    };
                 });
-            } else if (timeframe === '1W') {
-                timeString = date.toLocaleDateString('en-US', { 
-                    weekday: 'short',
-                    hour: '2-digit'
-                });
-            } else {
-                timeString = date.toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
+                
+                setChartData(transformed);
+            } catch (err) {
+                console.error('Failed to fetch historical data:', err);
+                setError('Failed to load chart data');
+            } finally {
+                setIsLoading(false);
             }
-            
-            data.push({
-                time: timeString,
-                price: Number(price.toFixed(2))
-            });
-        }
+        };
 
-        return data;
-    };
-
-    const chartData = useMemo(() => generateChartData(timeframe, stock.currentPrice), [timeframe, stock.currentPrice]);
+        fetchHistoricalData();
+    }, [timeframe, stock.symbol]);
 
     const isPositive = stock.change >= 0;
     const lineColor = isPositive ? '#10b981' : '#ef4444';
@@ -118,58 +109,75 @@ export default function StockChart({ stock }: StockChartProps) {
             </div>
 
             <div className="w-full h-[250px] md:h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
-                        <defs>
-                            <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor={lineColor} stopOpacity={0.3}/>
-                                <stop offset="95%" stopColor={lineColor} stopOpacity={0.05}/>
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid 
-                            strokeDasharray="3 3" 
-                            stroke="#374151" 
-                            opacity={0.3}
-                        />
-                        <XAxis 
-                            dataKey="time" 
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fontSize: 10, fill: '#6b7280' }}
-                            interval="preserveStartEnd"
-                            height={30}
-                        />
-                        <YAxis 
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fontSize: 10, fill: '#6b7280' }}
-                            domain={['dataMin - 1', 'dataMax + 1']}
-                            tickFormatter={(value) => `$${Math.round(value)}`}
-                            width={45}
-                        />
-                        <Tooltip 
-                            contentStyle={{
-                                backgroundColor: '#1f2937',
-                                border: 'none',
-                                borderRadius: '8px',
-                                color: '#f9fafb',
-                                padding: '8px 12px',
-                                fontSize: '12px'
-                            }}
-                            formatter={(value: number) => [`$${value.toFixed(2)}`, 'Price']}
-                            labelStyle={{ color: '#9ca3af', fontSize: '11px' }}
-                        />
-                        <Area
-                            type="monotone"
-                            dataKey="price"
-                            stroke={lineColor}
-                            strokeWidth={2}
-                            fill="url(#colorPrice)"
-                            dot={false}
-                            activeDot={{ r: 4, fill: lineColor }}
-                        />
-                    </AreaChart>
-                </ResponsiveContainer>
+                {isLoading ? (
+                    <div className="flex items-center justify-center h-full">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">Loading chart...</p>
+                        </div>
+                    </div>
+                ) : error ? (
+                    <div className="flex items-center justify-center h-full">
+                        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                    </div>
+                ) : chartData.length === 0 ? (
+                    <div className="flex items-center justify-center h-full">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-400">No chart data available</p>
+                    </div>
+                ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+                            <defs>
+                                <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor={lineColor} stopOpacity={0.3}/>
+                                    <stop offset="95%" stopColor={lineColor} stopOpacity={0.05}/>
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid 
+                                strokeDasharray="3 3" 
+                                stroke="#374151" 
+                                opacity={0.3}
+                            />
+                            <XAxis 
+                                dataKey="time" 
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fontSize: 10, fill: '#6b7280' }}
+                                interval="preserveStartEnd"
+                                height={30}
+                            />
+                            <YAxis 
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fontSize: 10, fill: '#6b7280' }}
+                                domain={['dataMin - 1', 'dataMax + 1']}
+                                tickFormatter={(value) => `${Math.round(value)}`}
+                                width={45}
+                            />
+                            <Tooltip 
+                                contentStyle={{
+                                    backgroundColor: '#1f2937',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    color: '#f9fafb',
+                                    padding: '8px 12px',
+                                    fontSize: '12px'
+                                }}
+                                formatter={(value: number) => [`${value.toFixed(2)}`, 'Price']}
+                                labelStyle={{ color: '#9ca3af', fontSize: '11px' }}
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="price"
+                                stroke={lineColor}
+                                strokeWidth={2}
+                                fill="url(#colorPrice)"
+                                dot={false}
+                                activeDot={{ r: 4, fill: lineColor }}
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                )}
             </div>
         </div>
     );

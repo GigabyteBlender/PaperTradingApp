@@ -1,0 +1,22 @@
+# FastAPI and ASGI server
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+
+# Database
+supabase==2.10.0
+
+# Authentication (handled by Supabase)
+python-multipart==0.0.9
+
+# HTTP client for external APIs
+httpx==0.27.2
+
+# Environment variables
+python-dotenv==1.0.1
+
+# Pydantic (included with FastAPI, but specifying for email validation)
+pydantic[email]==2.9.2
+pydantic-settings==2.5.2
+
+# Timezone handling
+pytz==2024.1

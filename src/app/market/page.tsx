@@ -2,8 +2,10 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Stock } from '@/types';
-import { mockStocks } from '@/data/mockData';
+import { useAuth } from '@/contexts/AuthContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { Stock, MarketStatus as MarketStatusEnum } from '@/types';
+import { getStockDetails } from '@/lib/api/stocks';
 import TradeModal from '@/components/TradeModal';
 import StockHeader from './components/StockHeader';
 import StockChart from './components/StockChart';
@@ -11,63 +13,113 @@ import StockStats from './components/StockStats';
 import MarketStatus from './components/MarketStatus';
 
 function MarketPageContent() {
+  const { isLoading: isAuthLoading, requireAuth } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
   const symbol = searchParams.get('symbol');
 
-  // Find stock data from mock data by symbol
-  const initializeStock = () => {
-    if (symbol) {
-      return mockStocks.find(s => s.symbol === symbol) || null;
-    }
-    return null;
-  };
-
-  const [stock] = useState<Stock | null>(initializeStock());
-  const [isLoading] = useState(false);
+  const [stock, setStock] = useState<Stock | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
 
-  // Redirect to dashboard if no symbol provided
+  // Fetch stock details from API
   useEffect(() => {
     if (!symbol) {
       router.push('/dashboard');
+      return;
     }
+
+    const fetchStockDetails = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        const details = await getStockDetails(symbol);
+        
+        // Transform API response to Stock type
+        const stockData: Stock = {
+          symbol: details.symbol,
+          name: details.name,
+          currentPrice: details.current_price,
+          previousClose: details.previous_close,
+          change: details.change,
+          changePercent: details.change_percent,
+          lastUpdate: new Date(details.last_update),
+          marketStatus: details.market_status as MarketStatusEnum,
+          volume: details.volume,
+          dayHigh: details.day_high,
+          dayLow: details.day_low,
+          marketCap: details.market_cap,
+          peRatio: details.pe_ratio,
+          dividendYield: details.dividend_yield,
+        };
+        
+        setStock(stockData);
+      } catch (err) {
+        console.error('Failed to fetch stock details:', err);
+        setError('Failed to load stock information. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStockDetails();
   }, [symbol, router]);
+
+  // Show loading state while checking authentication
+  if (isAuthLoading) {
+    return (
+      <div className="p-4 md:p-8">
+        <LoadingSpinner message="Authenticating..." />
+      </div>
+    );
+  }
+
+  // Auth context handles redirect, just return null if not authenticated
+  if (!requireAuth()) {
+    return null;
+  }
 
   if (isLoading) {
     return (
+      <div className="p-4 md:p-8">
+        <LoadingSpinner message="Loading stock information..." />
+      </div>
+    );
+  }
+
+  if (error || (!isLoading && !stock)) {
+    return (
       <div className="p-4 md:p-8 flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400">
-            Loading stock information...
+          <h1 className="text-xl md:text-2xl font-bold text-neutral-900 dark:text-white mb-4">
+            {error ? 'Error Loading Stock' : 'Stock Not Found'}
+          </h1>
+          <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400 mb-4">
+            {error || `The requested stock symbol "${symbol}" could not be found.`}
           </p>
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Return to Dashboard
+          </button>
         </div>
       </div>
     );
   }
 
   if (!stock) {
-    return (
-      <div className="p-4 md:p-8 flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <h1 className="text-xl md:text-2xl font-bold text-neutral-900 dark:text-white mb-4">
-            Stock Not Found
-          </h1>
-          <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400 mb-4">
-            The requested stock symbol &quot;{symbol}&quot; could not be found.
-          </p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
     <div className="p-4 md:p-8">
-      <StockHeader 
-        stock={stock} 
-        onTradeClick={() => setIsTradeModalOpen(true)} 
-      />
+        <StockHeader 
+          stock={stock} 
+          onTradeClick={() => setIsTradeModalOpen(true)} 
+        />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
         {/* Chart Section */}
@@ -102,13 +154,8 @@ function MarketPageContent() {
 export default function MarketPage() {
   return (
     <Suspense fallback={
-      <div className="p-4 md:p-8 flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400">
-            Loading...
-          </p>
-        </div>
+      <div className="p-4 md:p-8">
+        <LoadingSpinner />
       </div>
     }>
       <MarketPageContent />
