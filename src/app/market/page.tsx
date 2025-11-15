@@ -23,8 +23,8 @@ export default function MarketPage() {
     return null;
   };
 
-  const [stock, setStock] = useState<Stock | null>(initializeStock());
-  const [isLoading, setIsLoading] = useState(false);
+  const [stock] = useState<Stock | null>(initializeStock());
+  const [isLoading] = useState(false);
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
 
   // Redirect to dashboard if no symbol provided
@@ -55,7 +55,7 @@ export default function MarketPage() {
             Stock Not Found
           </h1>
           <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400 mb-4">
-            The requested stock symbol "{symbol}" could not be found.
+            The requested stock symbol &quot;{symbol}&quot; could not be found.
           </p>
         </div>
       </div>

@@ -17,7 +17,7 @@ export default function StockChart({ stock }: StockChartProps) {
     const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1D');
 
     // Generate mock chart data based on selected timeframe
-    const generateChartData = (timeframe: string): ChartData[] => {
+    const generateChartData = (timeframe: string, currentPrice: number): ChartData[] => {
         const now = new Date();
         const data: ChartData[] = [];
         let points = 50;
@@ -47,8 +47,8 @@ export default function StockChart({ stock }: StockChartProps) {
                 break;
         }
 
-        let price = stock.currentPrice;
-        const volatility = stock.currentPrice * 0.015;
+        let price = currentPrice;
+        const volatility = currentPrice * 0.015;
         
         // creating random points for the graph
         for (let i = points - 1; i >= 0; i--) {
@@ -57,7 +57,7 @@ export default function StockChart({ stock }: StockChartProps) {
             const date = new Date(timestamp);
             // using volatility here to not have too sudden changes on my graph
             const change = (Math.random() - 0.5) * volatility;
-            price = Math.max(price + change, stock.currentPrice * 0.7);
+            price = Math.max(price + change, currentPrice * 0.7);
             
             // Format time based on timeframe
             let timeString = '';
@@ -88,7 +88,7 @@ export default function StockChart({ stock }: StockChartProps) {
         return data;
     };
 
-    const chartData = useMemo(() => generateChartData(timeframe), [timeframe, stock.currentPrice]);
+    const chartData = useMemo(() => generateChartData(timeframe, stock.currentPrice), [timeframe, stock.currentPrice]);
 
     const isPositive = stock.change >= 0;
     const lineColor = isPositive ? '#10b981' : '#ef4444';

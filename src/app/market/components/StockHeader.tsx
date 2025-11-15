@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Stock } from '@/types';
 import { formatCurrency, formatPercentage } from '@/utils/portfolio';
 

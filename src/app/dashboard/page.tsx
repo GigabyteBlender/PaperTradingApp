@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import HoldingsTable from "./components/HoldingsTable";
 import TransactionsTable from "./components/TransactionsTable";
-import TradeModal from "@/components/TradeModal";
 import { mockPortfolio, mockTransactions, mockUser } from "@/data/mockData";
-import { Portfolio, Transaction, Stock } from "@/types";
+import { Portfolio, Transaction } from "@/types";
 import { formatCurrency, formatPercentage } from "@/utils/portfolio";
 import {
   getPortfolio,
@@ -20,8 +19,6 @@ export default function Dashboard() {
   // states used for data dislpayed on page and also tracking of componentes
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
-  const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [isPortfolioLoading, setIsPortfolioLoading] = useState(true);
   const [isTransactionsLoading, setIsTransactionsLoading] = useState(true);
   const { balance, isLoading: isBalanceLoading, updateBalance } = useBalance();
