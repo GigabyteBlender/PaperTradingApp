@@ -35,7 +35,7 @@ export default function SettingsPage() {
 
   // Save edited field to localStorage and update context
   const handleSave = (field: EditingField) => {
-    let updatedUser = { ...user };
+    const updatedUser = { ...user };
 
     if (field === 'username') {
       updatedUser.username = tempValue;

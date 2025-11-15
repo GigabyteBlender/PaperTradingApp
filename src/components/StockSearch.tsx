@@ -36,7 +36,7 @@ export default function StockSearch() {
           placeholder="Search stocks..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-3 md:px-4 py-2 md:py-2.5 pl-8 md:pl-10 border border-neutral-300 dark:border-neutral-600 rounded-lg md:rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-800 dark:text-white text-xs md:text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-500 bg-neutral-50 dark:bg-neutral-800 hover:bg-white dark:hover:bg-neutral-700 transition-all duration-200"
+          className="w-full px-3 md:px-4 py-2 md:py-2.5 pl-8 md:pl-10 border border-neutral-300 dark:border-neutral-600 rounded-lg md:rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white text-xs md:text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-500 bg-neutral-50 dark:bg-neutral-800 hover:bg-white dark:hover:bg-neutral-700 transition-all duration-200"
         />
         <div className="absolute inset-y-0 left-0 pl-2 md:pl-3 flex items-center pointer-events-none">
           <svg className="h-3.5 md:h-4 w-3.5 md:w-4 text-neutral-400 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,7 +88,7 @@ export default function StockSearch() {
             </div>
           ) : (
             <div className="p-4 text-center text-xs md:text-sm text-neutral-500 dark:text-neutral-400">
-              No stocks found matching "{searchTerm}"
+              No stocks found matching &quot;{searchTerm}&quot;
             </div>
           )}
         </div>

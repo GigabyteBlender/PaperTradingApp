@@ -37,7 +37,7 @@ export const getPortfolio = (): Portfolio | null => {
       const portfolio = JSON.parse(portfolioData);
       return {
         ...portfolio,
-        holdings: portfolio.holdings.map((holding: any) => ({
+        holdings: portfolio.holdings.map((holding: Portfolio['holdings'][0]) => ({
           ...holding,
           purchasedAt: new Date(holding.purchasedAt)
         }))
@@ -60,7 +60,7 @@ export const getTransactions = (): Transaction[] => {
     const transactionsData = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
     if (transactionsData) {
       const transactions = JSON.parse(transactionsData);
-      return transactions.map((transaction: any) => ({
+      return transactions.map((transaction: Transaction) => ({
         ...transaction,
         timestamp: new Date(transaction.timestamp)
       }));

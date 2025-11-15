@@ -117,8 +117,8 @@ export default function StockChart({ stock }: StockChartProps) {
                 </div>
             </div>
 
-            <div className="w-full h-[250px] md:h-[300px]" style={{ minHeight: '250px' }}>
-                <ResponsiveContainer width="100%" height="100%" minHeight={250}>
+            <div className="w-full h-[250px] md:h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
                         <defs>
                             <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">

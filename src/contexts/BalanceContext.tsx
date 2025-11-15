@@ -43,7 +43,7 @@ export function BalanceProvider({ children }: { children: ReactNode }) {
 
   // Refresh balance from localStorage
   const refreshBalance = () => {
-    let user = getUser();
+    const user = getUser();
     if (!user) {
       saveUser(mockUser);
     }
