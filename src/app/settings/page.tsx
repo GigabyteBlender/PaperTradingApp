@@ -65,24 +65,24 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-neutral-900">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-4 md:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <p className="text-lg text-gray-600 dark:text-gray-400">
+        <div className="mb-6 md:mb-8">
+          <p className="text-base md:text-lg text-gray-600 dark:text-gray-400">
             Manage your profile and account preferences
           </p>
         </div>
 
         {/* Profile Section */}
-        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-gray-200 dark:border-neutral-700 mb-6">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-neutral-700">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-              <User className="w-5 h-5 text-blue-600" />
+        <div className="bg-white dark:bg-neutral-800 rounded-lg md:rounded-xl shadow-sm border border-gray-200 dark:border-neutral-700 mb-6">
+          <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200 dark:border-neutral-700">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <User className="w-4 md:w-5 h-4 md:h-5 text-blue-600" />
               Profile Information
             </h2>
           </div>
 
-          <div className="p-6 space-y-6">
+          <div className="p-4 md:p-6 space-y-4 md:space-y-6">
             {/* User ID - Read Only */}
             <div className="group">
               <div className="flex items-center justify-between mb-2">

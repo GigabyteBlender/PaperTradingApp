@@ -66,60 +66,60 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white mb-6">
+    <div className="p-4 md:p-8">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white mb-4 md:mb-6">
           Dashboard
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-md transition-shadow">
-            <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-3 uppercase tracking-wider">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg md:rounded-xl p-4 md:p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-md transition-shadow">
+            <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-2 md:mb-3 uppercase tracking-wider">
               Portfolio Value
             </h3>
             {isPortfolioLoading || !portfolio ? (
-              <div className="h-8 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse w-32"></div>
+              <div className="h-6 md:h-8 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse w-24 md:w-32"></div>
             ) : (
-              <p className="text-2xl font-bold text-neutral-900 dark:text-white">
+              <p className="text-xl md:text-2xl font-bold text-neutral-900 dark:text-white">
                 {formatCurrency(portfolio.totalValue)}
               </p>
             )}
           </div>
 
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-md transition-shadow">
-            <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-3 uppercase tracking-wider">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg md:rounded-xl p-4 md:p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-md transition-shadow">
+            <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-2 md:mb-3 uppercase tracking-wider">
               Cash Balance
             </h3>
             {isBalanceLoading ? (
-              <div className="h-8 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse w-28"></div>
+              <div className="h-6 md:h-8 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse w-20 md:w-28"></div>
             ) : (
-              <p className="text-2xl font-bold text-neutral-900 dark:text-white">
+              <p className="text-xl md:text-2xl font-bold text-neutral-900 dark:text-white">
                 {formatCurrency(balance || 0)}
               </p>
             )}
           </div>
 
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-md transition-shadow">
-            <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-3 uppercase tracking-wider">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg md:rounded-xl p-4 md:p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-md transition-shadow">
+            <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-2 md:mb-3 uppercase tracking-wider">
               Total P&L
             </h3>
             {isPortfolioLoading || !portfolio ? (
-              <div className="h-8 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse w-24"></div>
+              <div className="h-6 md:h-8 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse w-20 md:w-24"></div>
             ) : (
-              <p className={`text-2xl font-bold ${portfolio.profitLoss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+              <p className={`text-xl md:text-2xl font-bold ${portfolio.profitLoss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                 {formatCurrency(portfolio.profitLoss)}
               </p>
             )}
           </div>
 
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-md transition-shadow">
-            <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-3 uppercase tracking-wider">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg md:rounded-xl p-4 md:p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-md transition-shadow">
+            <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-2 md:mb-3 uppercase tracking-wider">
               P&L Percentage
             </h3>
             {isPortfolioLoading || !portfolio ? (
-              <div className="h-8 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse w-20"></div>
+              <div className="h-6 md:h-8 bg-neutral-200 dark:bg-neutral-600 rounded animate-pulse w-16 md:w-20"></div>
             ) : (
-              <p className={`text-2xl font-bold ${portfolio.profitLossPercent >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+              <p className={`text-xl md:text-2xl font-bold ${portfolio.profitLossPercent >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                 {formatPercentage(portfolio.profitLossPercent)}
               </p>
             )}
@@ -127,14 +127,14 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <h2 className="text-xl font-bold tracking-tight mb-6 text-neutral-900 dark:text-white">Portfolio Holdings</h2>
+      <h2 className="text-lg md:text-xl font-bold tracking-tight mb-4 md:mb-6 text-neutral-900 dark:text-white">Portfolio Holdings</h2>
       <HoldingsTable
         portfolio={portfolio}
         isLoading={isPortfolioLoading}
         onTradeComplete={handleTradeComplete}
       />
 
-      <h2 className="text-xl font-bold tracking-tight mb-6 mt-12 text-neutral-900 dark:text-white">Recent Transactions</h2>
+      <h2 className="text-lg md:text-xl font-bold tracking-tight mb-4 md:mb-6 mt-8 md:mt-12 text-neutral-900 dark:text-white">Recent Transactions</h2>
       <TransactionsTable
         transactions={transactions}
         isLoading={isTransactionsLoading}
