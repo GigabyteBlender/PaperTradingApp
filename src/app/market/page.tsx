@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Stock } from '@/types';
 import { mockStocks } from '@/data/mockData';
@@ -10,7 +10,7 @@ import StockChart from './components/StockChart';
 import StockStats from './components/StockStats';
 import MarketStatus from './components/MarketStatus';
 
-export default function MarketPage() {
+function MarketPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const symbol = searchParams.get('symbol');
@@ -96,5 +96,22 @@ export default function MarketPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function MarketPage() {
+  return (
+    <Suspense fallback={
+      <div className="p-4 md:p-8 flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400">
+            Loading...
+          </p>
+        </div>
+      </div>
+    }>
+      <MarketPageContent />
+    </Suspense>
   );
 }
