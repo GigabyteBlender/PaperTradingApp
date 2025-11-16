@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import HoldingsTable from "./components/HoldingsTable";
 import TransactionsTable from "./components/TransactionsTable";
-import StatCard from "@/components/StatCard";
+import StatCard from "@/app/dashboard/components/StatCard";
 import { formatCurrency, formatPercentage } from "@/utils/portfolio";
 import { useBalance } from "@/contexts/BalanceContext";
 import { usePortfolio } from "@/contexts/PortfolioContext";
 import { getTransactions } from "@/lib/api/transactions";
-import type { TransactionResponse } from "@/lib/api/types";
+import type { TransactionResponse } from "@/lib/types";
 
 export default function Dashboard() {
   const { isLoading: isAuthLoading, requireAuth } = useAuth();
@@ -59,18 +59,6 @@ export default function Dashboard() {
       console.error('Error refreshing transactions:', err);
     }
   };
-
-  // Show loading state while checking authentication
-  if (isAuthLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
   // Auth context handles redirect, just return null if not authenticated
   if (!requireAuth()) {

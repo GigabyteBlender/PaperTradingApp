@@ -4,7 +4,7 @@ import type {
   StockDetailsResponse,
   StockSearchResult,
   HistoricalPrice,
-} from './types';
+} from '../types';
 
 /**
  * Fetch current stock quote (lightweight version with price and change).

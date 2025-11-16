@@ -1,50 +1,37 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Stock, MarketStatus } from '@/types';
-import { formatCurrency, formatPercentage } from '@/utils/portfolio';
 import { searchStocks } from '@/lib/api/stocks';
+
+interface SearchResult {
+  symbol: string;
+  name: string;
+}
 
 export default function StockSearch() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<Stock[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Search stocks via API when search term changes
+  // Debounced search: waits 300ms after user stops typing before searching
   useEffect(() => {
+    // Clear results if search is empty
     if (searchTerm.trim() === '') {
       setSearchResults([]);
       setError(null);
       return;
     }
 
+    // Debounce: delay API call to avoid excessive requests while typing
     const searchTimeout = setTimeout(async () => {
       setIsSearching(true);
       setError(null);
       
       try {
+        // Fetch up to 10 matching stocks from API
         const results = await searchStocks(searchTerm, 10);
-        
-        // Transform API response to Stock type
-        const transformedResults: Stock[] = results.map(result => ({
-          symbol: result.symbol,
-          name: result.name,
-          currentPrice: result.current_price,
-          previousClose: result.current_price - result.change,
-          change: result.change,
-          changePercent: result.change_percent,
-          lastUpdate: new Date(),
-          marketStatus: MarketStatus.OPEN,
-          volume: 0,
-          dayHigh: 0,
-          dayLow: 0,
-          marketCap: 0,
-          peRatio: 0,
-          dividendYield: 0,
-        }));
-        
-        setSearchResults(transformedResults);
+        setSearchResults(results);
       } catch (err) {
         console.error('Stock search error:', err);
         setError('Failed to search stocks. Please try again.');
@@ -54,6 +41,7 @@ export default function StockSearch() {
       }
     }, 300);
 
+    // Cleanup: cancel pending search if user types again
     return () => clearTimeout(searchTimeout);
   }, [searchTerm]);
 
@@ -106,13 +94,8 @@ export default function StockSearch() {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="font-semibold text-sm md:text-base text-neutral-900 dark:text-white">
-                        {formatCurrency(stock.currentPrice)}
-                      </div>
-                      <div className={`text-xs md:text-sm ${
-                        stock.change >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-                      }`}>
-                        {formatPercentage(stock.changePercent)}
+                      <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                        Click to view
                       </div>
                     </div>
                   </div>

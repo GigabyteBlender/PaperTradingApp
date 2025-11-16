@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Stock } from '@/types';
+import { Stock } from '@/lib/types';
 import { formatCurrency, formatPercentage } from '@/utils/portfolio';
 import TradeModal from '@/components/TradeModal';
-import type { PortfolioResponse, HoldingResponse } from '@/lib/api/types';
+import type { PortfolioResponse, HoldingResponse } from '@/lib/types';
 
 interface HoldingsTableProps {
   portfolio: PortfolioResponse | null;
@@ -24,18 +24,18 @@ export default function HoldingsTable({ portfolio, isLoading = false, onTradeCom
     return {
       symbol: holding.symbol,
       name: holding.company_name,
-      currentPrice: holding.current_price,
-      previousClose: holding.average_cost,
+      current_price: holding.current_price,
+      previous_close: holding.average_cost,
       change: holding.current_price - holding.average_cost,
-      changePercent: holding.unrealized_pl_percent,
-      lastUpdate: new Date(holding.purchased_at),
-      marketStatus: 'OPEN' as any,
+      change_percent: holding.unrealized_pl_percent,
+      last_update: holding.purchased_at,
+      market_status: 'OPEN',
       volume: 0,
-      dayHigh: holding.current_price,
-      dayLow: holding.current_price,
-      marketCap: 0,
-      peRatio: 0,
-      dividendYield: 0
+      day_high: holding.current_price,
+      day_low: holding.current_price,
+      market_cap: 0,
+      pe_ratio: 0,
+      dividend_yield: 0
     };
   };
 

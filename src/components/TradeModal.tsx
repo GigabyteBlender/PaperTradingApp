@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Stock, TransactionType } from '@/types';
+import { Stock, TransactionType } from '@/lib/types';
 import { formatCurrency } from '@/utils/portfolio';
 import { useBalance } from '@/contexts/BalanceContext';
 import { usePortfolio } from '@/contexts/PortfolioContext';
 import { createTransaction } from '@/lib/api/transactions';
-import type { TransactionCreateRequest } from '@/lib/api/types';
+import type { TransactionCreateRequest } from '@/lib/types';
 
 interface TradeModalProps {
   stock: Stock;
@@ -21,12 +21,12 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const { balance, updateBalance, refreshBalance } = useBalance();
+  const { balance, updateBalance } = useBalance();
   const { holdings, refreshPortfolio } = usePortfolio();
   
   const currentHolding = holdings.find(h => h.symbol === stock.symbol);
   const maxSellShares = currentHolding?.shares || 0;
-  const totalCost = shares * stock.currentPrice;
+  const totalCost = shares * stock.current_price;
   const canAfford = tradeType === TransactionType.BUY ? totalCost <= (balance || 0) : true;
   const canSell = tradeType === TransactionType.SELL ? shares <= maxSellShares : true;
 
@@ -49,7 +49,7 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
         type: tradeType === TransactionType.BUY ? 'BUY' : 'SELL',
         symbol: stock.symbol,
         shares,
-        price: stock.currentPrice,
+        price: stock.current_price,
         company_name: stock.name,
       };
 
@@ -59,11 +59,8 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
       // Update local balance state immediately for responsive UI
       updateBalance(response.updated_balance);
 
-      // Refresh portfolio and balance from backend to ensure consistency
-      await Promise.all([
-        refreshPortfolio(),
-        refreshBalance(),
-      ]);
+      // Refresh portfolio from backend to ensure consistency
+      await refreshPortfolio();
 
       // Reset form and close modal
       setShares(1);
@@ -100,10 +97,10 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
         <div className="mb-4">
           <p className="text-xs md:text-sm text-neutral-600 dark:text-neutral-400">{stock.name}</p>
           <p className="text-base md:text-lg font-semibold text-neutral-900 dark:text-white">
-            {formatCurrency(stock.currentPrice)}
+            {formatCurrency(stock.current_price)}
           </p>
           <p className={`text-xs md:text-sm ${stock.change >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-            {stock.change >= 0 ? '+' : ''}{formatCurrency(stock.change)} ({stock.changePercent.toFixed(2)}%)
+            {stock.change >= 0 ? '+' : ''}{formatCurrency(stock.change)} ({stock.change_percent.toFixed(2)}%)
           </p>
         </div>
 

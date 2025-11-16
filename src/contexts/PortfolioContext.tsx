@@ -1,10 +1,10 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useState, useEffect, ReactNode } from 'react';
 import * as portfolioAPI from '@/lib/api/portfolio';
 import { useAuth } from './AuthContext';
-import type { PortfolioResponse, HoldingResponse } from '@/lib/api/types';
-import { createContextHook } from '@/hooks/useContextFactory';
+import type { PortfolioResponse, HoldingResponse } from '@/lib/types';
+import { createContextHook } from '@/hooks/useContext';
 
 interface PortfolioContextType {
   portfolio: PortfolioResponse | null;

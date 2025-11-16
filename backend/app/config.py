@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     
     # Supabase configuration
     SUPABASE_URL: str = ""
-    SUPABASE_KEY: str = ""  # Use service_role key from Supabase dashboard
+    SUPABASE_KEY: str = ""
     
     # CORS configuration
     CORS_ORIGINS: str = "http://localhost:3000"
@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "Trading Application API"
     DEBUG: bool = False
     
+    # Automatically loads and replaces the secrets here with their actual value
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=True,
@@ -34,7 +35,14 @@ class Settings(BaseSettings):
     
     @property
     def cors_origins_list(self) -> List[str]:
-        """Parse CORS_ORIGINS string into a list."""
+        """
+        Parse CORS_ORIGINS string into a list.
+        
+        FastAPI's CORSMiddleware requires a list of allowed origins,
+        but environment variables are stored as strings. This property
+        converts the comma-separated string (e.g., "http://localhost:3000,http://localhost:3001")
+        into a list that the middleware can use.
+        """
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
 
 # Create settings instance

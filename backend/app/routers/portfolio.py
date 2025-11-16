@@ -9,7 +9,6 @@ from app.utils.dependencies import get_current_user
 from app.schemas.portfolio import HoldingResponse, PortfolioResponse
 from app.services.portfolio_service import (
     get_user_holdings,
-    get_holding_by_symbol,
     calculate_portfolio_metrics
 )
 from app.utils.holding_calculator import calculate_holding_metrics, get_current_prices_map
@@ -43,7 +42,7 @@ async def get_portfolio(
             holdings=[]
         )
     
-    current_prices = get_current_prices_map(holdings)
+    current_prices = await get_current_prices_map(holdings)
     metrics = calculate_portfolio_metrics(holdings, current_prices)
     
     holding_responses = [
@@ -58,48 +57,3 @@ async def get_portfolio(
         profit_loss_percent=metrics["profit_loss_percent"],
         holdings=holding_responses
     )
-
-
-@router.get("/holdings", response_model=List[HoldingResponse])
-async def get_holdings(
-    current_user: dict = Depends(get_current_user),
-    supabase: Client = Depends(get_supabase)
-):
-    """
-    Get user's holdings list.
-    Protected endpoint - requires valid JWT token.
-    
-    Returns list of all holdings with calculated metrics.
-    """
-    holdings = get_user_holdings(supabase, current_user["id"])
-    
-    if not holdings:
-        return []
-    
-    current_prices = get_current_prices_map(holdings)
-    
-    return [
-        calculate_holding_metrics(holding, current_prices[holding["symbol"]])
-        for holding in holdings
-    ]
-
-
-@router.get("/holdings/{symbol}", response_model=HoldingResponse)
-async def get_holding(
-    symbol: str,
-    current_user: dict = Depends(get_current_user),
-    supabase: Client = Depends(get_supabase)
-):
-    """
-    Get specific holding by symbol.
-    Protected endpoint - requires valid JWT token.
-    
-    Returns holding details with calculated metrics for the specified symbol.
-    """
-    holding = get_holding_by_symbol(supabase, current_user["id"], symbol.upper())
-    
-    if not holding:
-        raise HTTPException(status_code=404, detail=f"Holding not found for symbol: {symbol}")
-    
-    current_price = Decimal(str(holding["average_cost"]))
-    return calculate_holding_metrics(holding, current_price)

@@ -24,11 +24,6 @@ export interface UserResponse {
   created_at: string;
 }
 
-// User types
-export interface BalanceResponse {
-  balance: number;
-}
-
 // Portfolio types
 export interface HoldingResponse {
   symbol: string;
@@ -104,9 +99,8 @@ export interface StockDetailsResponse {
 export interface StockSearchResult {
   symbol: string;
   name: string;
-  current_price: number;
-  change: number;
-  change_percent: number;
+  type?: string;
+  region?: string;
 }
 
 export interface HistoricalPrice {
@@ -117,3 +111,19 @@ export interface HistoricalPrice {
   close: number;
   volume: number;
 }
+
+// Frontend enums
+export enum MarketStatus {
+  OPEN = 'OPEN',
+  CLOSED = 'CLOSED',
+  PRE_MARKET = 'PRE_MARKET',
+  AFTER_HOURS = 'AFTER_HOURS'
+}
+
+export enum TransactionType {
+  BUY = 'BUY',
+  SELL = 'SELL'
+}
+
+// Frontend Stock type (camelCase for UI components)
+export type Stock = StockDetailsResponse;

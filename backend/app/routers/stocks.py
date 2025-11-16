@@ -1,7 +1,8 @@
 """Stock and market data endpoints."""
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from typing import List
+import httpx
 from app.utils.dependencies import get_current_user
 from app.schemas.stock import StockQuote, StockDetails, StockSearchResult, HistoricalPrice, MarketStatus
 from app.services.stock_service import (
@@ -13,6 +14,29 @@ from app.services.stock_service import (
 )
 
 router = APIRouter()
+
+
+@router.get("/search", response_model=List[StockSearchResult])
+async def search(
+    q: str = Query(..., min_length=1, description="Search query (symbol or company name)"),
+    limit: int = Query(10, ge=1, le=50, description="Maximum number of results"),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Search for stocks by symbol or company name.
+    Protected endpoint - requires valid JWT token.
+    
+    Returns list of matching stocks with basic information.
+    Use this endpoint for autocomplete/search functionality.
+    
+    Rate limiting: Cached for 10 minutes to reduce API calls.
+    """
+    try:
+        return await search_stocks(q, limit)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=502, detail="Failed to fetch data from stock API")
 
 
 @router.get("/{symbol}", response_model=StockDetails)
@@ -33,29 +57,8 @@ async def get_stock(
         return await get_stock_details(symbol.upper())
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch stock data: {str(e)}")
-
-
-@router.get("/search", response_model=List[StockSearchResult])
-async def search(
-    q: str = Query(..., min_length=1, description="Search query (symbol or company name)"),
-    limit: int = Query(10, ge=1, le=50, description="Maximum number of results"),
-    current_user: dict = Depends(get_current_user)
-):
-    """
-    Search for stocks by symbol or company name.
-    Protected endpoint - requires valid JWT token.
-    
-    Returns list of matching stocks with basic information.
-    Use this endpoint for autocomplete/search functionality.
-    
-    Rate limiting: Cached for 10 minutes to reduce API calls.
-    """
-    try:
-        return await search_stocks(q, limit)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=502, detail="Failed to fetch data from stock API")
 
 
 @router.get("/quote/{symbol}", response_model=StockQuote)
@@ -76,8 +79,8 @@ async def get_quote(
         return await get_stock_quote(symbol.upper())
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch quote: {str(e)}")
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=502, detail="Failed to fetch data from stock API")
 
 
 @router.get("/{symbol}/history", response_model=List[HistoricalPrice])
@@ -106,8 +109,8 @@ async def get_history(
         return await get_historical_data(symbol.upper(), period)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch historical data: {str(e)}")
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=502, detail="Failed to fetch data from stock API")
 
 
 @router.get("/market/status", response_model=MarketStatus)

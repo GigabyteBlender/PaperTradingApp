@@ -4,7 +4,7 @@ import type {
   LoginRequest,
   AuthResponse,
   UserResponse,
-} from './types';
+} from '../types';
 
 /**
  * Signup creates a new user account via Supabase Auth and app user record.

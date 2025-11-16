@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Stock } from '@/types';
+import { Stock } from '@/lib/types';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { getStockHistory } from '@/lib/api/stocks';
 
@@ -15,7 +15,7 @@ interface ChartData {
 }
 
 export default function StockChart({ stock }: StockChartProps) {
-    const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1M');
+    const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '1Y'>('1M');
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -30,7 +30,7 @@ export default function StockChart({ stock }: StockChartProps) {
                 // Map UI timeframe to API period
                 const periodMap: Record<string, '1d' | '5d' | '1mo' | '3mo' | '1y' | '5y'> = {
                     '1D': '1d',
-                    '1W': '5d',
+                    '5D': '5d',
                     '1M': '1mo',
                     '3M': '3mo',
                     '1Y': '1y',
@@ -51,7 +51,7 @@ export default function StockChart({ stock }: StockChartProps) {
                             minute: '2-digit',
                             hour12: false 
                         });
-                    } else if (timeframe === '1W') {
+                    } else if (timeframe === '5D') {
                         timeString = date.toLocaleDateString('en-US', { 
                             weekday: 'short',
                             hour: '2-digit'
@@ -92,7 +92,7 @@ export default function StockChart({ stock }: StockChartProps) {
                 </h2>
 
                 <div className="flex bg-neutral-100 dark:bg-neutral-700 rounded-lg p-1 overflow-x-auto">
-                    {(['1D', '1W', '1M', '3M', '1Y'] as const).map((tf) => (
+                    {(['1D', '5D', '1M', '3M', '1Y'] as const).map((tf) => (
                         <button
                             key={tf}
                             onClick={() => setTimeframe(tf)}
@@ -108,15 +108,8 @@ export default function StockChart({ stock }: StockChartProps) {
                 </div>
             </div>
 
-            <div className="w-full h-[250px] md:h-[300px]">
-                {isLoading ? (
-                    <div className="flex items-center justify-center h-full">
-                        <div className="text-center">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                            <p className="text-xs text-neutral-500 dark:text-neutral-400">Loading chart...</p>
-                        </div>
-                    </div>
-                ) : error ? (
+            <div className="w-full h-[250px] md:h-[300px] min-h-[250px]">
+                {error ? (
                     <div className="flex items-center justify-center h-full">
                         <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
                     </div>
@@ -125,7 +118,7 @@ export default function StockChart({ stock }: StockChartProps) {
                         <p className="text-sm text-neutral-500 dark:text-neutral-400">No chart data available</p>
                     </div>
                 ) : (
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minHeight={250}>
                         <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
                             <defs>
                                 <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
@@ -163,7 +156,7 @@ export default function StockChart({ stock }: StockChartProps) {
                                     padding: '8px 12px',
                                     fontSize: '12px'
                                 }}
-                                formatter={(value: number) => [`${value.toFixed(2)}`, 'Price']}
+                                formatter={(value: number) => [`${Number(value).toFixed(2)}`, 'Price']}
                                 labelStyle={{ color: '#9ca3af', fontSize: '11px' }}
                             />
                             <Area

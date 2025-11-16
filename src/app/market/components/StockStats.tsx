@@ -1,6 +1,6 @@
 'use client';
 
-import { Stock } from '@/types';
+import { Stock } from '@/lib/types';
 import { formatCurrency, formatNumber } from '@/utils/portfolio';
 
 interface StockStatsProps {
@@ -18,14 +18,14 @@ export default function StockStats({ stock }: StockStatsProps) {
         <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-b-0">
           <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">Previous Close</span>
           <span className="font-medium text-neutral-900 dark:text-white text-sm md:text-base">
-            {formatCurrency(stock.previousClose)}
+            {formatCurrency(stock.previous_close)}
           </span>
         </div>
 
         <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-b-0">
           <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">Day Range</span>
           <span className="font-medium text-neutral-900 dark:text-white text-sm md:text-base">
-            {formatCurrency(stock.dayLow)} - {formatCurrency(stock.dayHigh)}
+            {formatCurrency(stock.day_low)} - {formatCurrency(stock.day_high)}
           </span>
         </div>
 
@@ -39,21 +39,21 @@ export default function StockStats({ stock }: StockStatsProps) {
         <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-b-0">
           <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">Market Cap</span>
           <span className="font-medium text-neutral-900 dark:text-white text-sm md:text-base">
-            {formatCurrency(stock.marketCap / 1000000000)}B
+            {formatCurrency(stock.market_cap / 1000000000)}B
           </span>
         </div>
 
         <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-b-0">
           <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">P/E Ratio</span>
           <span className="font-medium text-neutral-900 dark:text-white text-sm md:text-base">
-            {stock.peRatio.toFixed(2)}
+            {stock.pe_ratio != null ? Number(stock.pe_ratio).toFixed(2) : 'N/A'}
           </span>
         </div>
 
         <div className="flex justify-between items-center py-1.5 md:py-2">
           <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">Dividend Yield</span>
           <span className="font-medium text-neutral-900 dark:text-white text-sm md:text-base">
-            {stock.dividendYield.toFixed(2)}%
+            {stock.dividend_yield != null ? `${Number(stock.dividend_yield).toFixed(2)}%` : 'N/A'}
           </span>
         </div>
       </div>

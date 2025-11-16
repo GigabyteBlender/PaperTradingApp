@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { PortfolioResponse, HoldingResponse } from './types';
+import type { PortfolioResponse, HoldingResponse } from '../types';
 
 /**
  * Fetch complete portfolio with calculated metrics (total value, profit/loss, holdings).

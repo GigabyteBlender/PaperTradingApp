@@ -3,7 +3,7 @@ import type {
   TransactionCreateRequest,
   TransactionCreateResponse,
   TransactionResponse,
-} from './types';
+} from '../types';
 
 /**
  * Execute buy or sell transaction with atomic balance and holdings updates.
@@ -24,13 +24,4 @@ export async function getTransactions(
   return apiClient.get<TransactionResponse[]>(
     `/api/transactions?limit=${limit}&offset=${offset}`
   );
-}
-
-/**
- * Fetch specific transaction by ID.
- */
-export async function getTransactionById(
-  transactionId: string
-): Promise<TransactionResponse> {
-  return apiClient.get<TransactionResponse>(`/api/transactions/${transactionId}`);
 }

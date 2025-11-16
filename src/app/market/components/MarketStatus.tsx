@@ -1,6 +1,6 @@
 'use client';
 
-import { Stock } from '@/types';
+import { Stock } from '@/lib/types';
 
 interface MarketStatusProps {
   stock: Stock;
@@ -17,14 +17,14 @@ export default function MarketStatus({ stock }: MarketStatusProps) {
 
         <div className="flex items-center">
           <div className={`w-2.5 md:w-3 h-2.5 md:h-3 rounded-full mr-2 md:mr-3 ${
-            stock.marketStatus === 'OPEN' ? 'bg-green-500' : 'bg-red-500'
+            stock.market_status === 'OPEN' ? 'bg-green-500' : 'bg-red-500'
           }`}></div>
           <span className={`font-medium text-sm md:text-base ${
-            stock.marketStatus === 'OPEN' 
+            stock.market_status === 'OPEN' 
               ? 'text-green-600 dark:text-green-400' 
               : 'text-red-600 dark:text-red-400'
           }`}>
-            Market {stock.marketStatus === 'OPEN' ? 'Open' : 'Closed'}
+            Market {stock.market_status === 'OPEN' ? 'Open' : 'Closed'}
           </span>
         </div>
       </div>

@@ -19,6 +19,9 @@ class StockQuote(BaseModel):
     
     class Config:
         from_attributes = True
+        json_encoders = {
+            Decimal: float
+        }
 
 
 class StockDetails(BaseModel):
@@ -43,6 +46,9 @@ class StockDetails(BaseModel):
     
     class Config:
         from_attributes = True
+        json_encoders = {
+            Decimal: float
+        }
 
 
 class StockSearchResult(BaseModel):
@@ -52,9 +58,8 @@ class StockSearchResult(BaseModel):
     """
     symbol: str
     name: str
-    current_price: Optional[Decimal] = None
-    change: Optional[Decimal] = None
-    change_percent: Optional[Decimal] = None
+    type: Optional[str] = None
+    region: Optional[str] = None
     
     class Config:
         from_attributes = True
@@ -74,6 +79,9 @@ class HistoricalPrice(BaseModel):
     
     class Config:
         from_attributes = True
+        json_encoders = {
+            Decimal: float
+        }
 
 
 class MarketStatus(BaseModel):

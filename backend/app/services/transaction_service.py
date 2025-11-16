@@ -43,9 +43,10 @@ def process_buy_transaction(
     shares: Decimal,
     price: Decimal,
     total_cost: Decimal
-) -> dict:
+) -> Optional[dict]:
     """
     Process buy transaction atomically by deducting balance and updating holdings.
+    Returns the updated or created holding.
     """
     balance = get_user_balance(supabase, user_id)
     new_balance = balance - total_cost
@@ -176,7 +177,6 @@ def get_transaction_by_id(supabase: Client, user_id: str, transaction_id: str) -
         .select("*")\
         .eq("id", transaction_id)\
         .eq("user_id", user_id)\
-        .single()\
         .execute()
     
-    return result.data if result.data else None
+    return result.data[0] if result.data else None

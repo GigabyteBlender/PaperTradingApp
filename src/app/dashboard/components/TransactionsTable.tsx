@@ -1,5 +1,5 @@
 import { formatCurrency } from '@/utils/portfolio';
-import type { TransactionResponse } from '@/lib/api/types';
+import type { TransactionResponse } from '@/lib/types';
 
 interface TransactionsTableProps {
   transactions: TransactionResponse[];

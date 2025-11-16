@@ -18,8 +18,8 @@ def get_holding_by_symbol(supabase: Client, user_id: str, symbol: str) -> Option
     """
     Fetch specific holding by symbol for a user.
     """
-    result = supabase.table("holdings").select("*").eq("user_id", user_id).eq("symbol", symbol).single().execute()
-    return result.data if result.data else None
+    result = supabase.table("holdings").select("*").eq("user_id", user_id).eq("symbol", symbol).execute()
+    return result.data[0] if result.data else None
 
 
 def calculate_portfolio_metrics(holdings: List[dict], current_prices: Dict[str, Decimal]) -> dict:
@@ -61,16 +61,19 @@ def update_or_create_holding(
     shares: Decimal,
     price: Decimal,
     transaction_type: str
-) -> dict:
+) -> Optional[dict]:
     """
     Update existing holding or create new one based on transaction type.
     For BUY: adds shares and recalculates average cost.
     For SELL: reduces shares or deletes holding if zero.
+    Returns None only when a holding is completely sold (deleted).
+    Raises ValueError on any database operation failure.
     """
     existing = get_holding_by_symbol(supabase, user_id, symbol)
     
     if transaction_type == "BUY":
         if existing:
+            # Update existing holding
             old_shares = Decimal(str(existing["shares"]))
             old_avg = Decimal(str(existing["average_cost"]))
             new_shares = old_shares + shares
@@ -82,8 +85,12 @@ def update_or_create_holding(
                 "updated_at": datetime.utcnow().isoformat()
             }).eq("id", existing["id"]).execute()
             
-            return result.data[0] if result.data else None
+            if not result.data:
+                raise ValueError(f"Failed to update holding for {symbol}")
+            
+            return result.data[0]
         else:
+            # Create new holding
             result = supabase.table("holdings").insert({
                 "user_id": user_id,
                 "symbol": symbol,
@@ -92,7 +99,10 @@ def update_or_create_holding(
                 "average_cost": float(price)
             }).execute()
             
-            return result.data[0] if result.data else None
+            if not result.data:
+                raise ValueError(f"Failed to create holding for {symbol}")
+            
+            return result.data[0]
     
     elif transaction_type == "SELL":
         if not existing:
@@ -105,15 +115,21 @@ def update_or_create_holding(
             raise ValueError(f"Insufficient shares to sell. Have {old_shares}, trying to sell {shares}")
         
         if new_shares == 0:
-            supabase.table("holdings").delete().eq("id", existing["id"]).execute()
+            # Delete holding when all shares are sold
+            result = supabase.table("holdings").delete().eq("id", existing["id"]).execute()
+            # Delete operations don't return data, just verify no error occurred
             return None
         else:
+            # Update holding with reduced shares
             result = supabase.table("holdings").update({
                 "shares": float(new_shares),
                 "updated_at": datetime.utcnow().isoformat()
             }).eq("id", existing["id"]).execute()
             
-            return result.data[0] if result.data else None
+            if not result.data:
+                raise ValueError(f"Failed to update holding for {symbol}")
+            
+            return result.data[0]
     
     else:
         raise ValueError(f"Invalid transaction type: {transaction_type}")

@@ -9,8 +9,7 @@ from app.utils.dependencies import get_current_user
 from app.schemas.transaction import TransactionCreate, TransactionResponse
 from app.services.transaction_service import (
     create_transaction,
-    get_user_transactions,
-    get_transaction_by_id
+    get_user_transactions
 )
 
 router = APIRouter()
@@ -100,31 +99,3 @@ async def get_transactions(
         )
         for t in transactions
     ]
-
-
-@router.get("/{transaction_id}", response_model=TransactionResponse)
-async def get_transaction(
-    transaction_id: str,
-    current_user: dict = Depends(get_current_user),
-    supabase: Client = Depends(get_supabase)
-):
-    """
-    Get specific transaction by ID.
-    Protected endpoint - requires valid JWT token.
-    
-    Validates transaction belongs to authenticated user.
-    """
-    transaction = get_transaction_by_id(supabase, current_user["id"], transaction_id)
-    
-    if not transaction:
-        raise HTTPException(status_code=404, detail="Transaction not found")
-    
-    return TransactionResponse(
-        id=transaction["id"],
-        type=transaction["type"],
-        symbol=transaction["symbol"],
-        shares=transaction["shares"],
-        price=transaction["price"],
-        total_cost=transaction["total_cost"],
-        timestamp=transaction["timestamp"]
-    )

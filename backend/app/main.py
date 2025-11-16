@@ -26,8 +26,8 @@ logging.basicConfig(
 
 # Initialize FastAPI application
 app = FastAPI(
-    title="Trading Application API",
-    description="Backend API for user authentication and trading operations",
+    title="backend",
+    description="Backend API for my NEA",
     version="1.0.0"
 )
 
@@ -61,9 +61,8 @@ async def health_check():
     return {"status": "healthy"}
 
 # Include routers
-from app.routers import auth, users, portfolio, transactions, stocks
+from app.routers import auth, portfolio, transactions, stocks
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
-app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(portfolio.router, prefix="/api/portfolio", tags=["Portfolio"])
 app.include_router(transactions.router, prefix="/api/transactions", tags=["Transactions"])
 app.include_router(stocks.router, prefix="/api/stocks", tags=["Stocks"])

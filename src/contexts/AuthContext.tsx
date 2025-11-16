@@ -4,8 +4,8 @@ import { createContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import * as authAPI from '@/lib/api/auth';
 import { tokenStorage } from '@/lib/api/client';
-import type { UserResponse, SignupRequest, LoginRequest } from '@/lib/api/types';
-import { createContextHook } from '@/hooks/useContextFactory';
+import type { UserResponse, SignupRequest, LoginRequest } from '@/lib/types';
+import { createContextHook } from '@/hooks/useContext';
 
 interface AuthContextType {
   user: UserResponse | null;

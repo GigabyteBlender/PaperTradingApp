@@ -3,13 +3,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
-
-class UserBase(BaseModel):
-    """Base user schema with common fields."""
-    email: EmailStr
-    username: str
-
-
 class UserResponse(BaseModel):
     """User response schema for API endpoints."""
     id: str
@@ -20,8 +13,3 @@ class UserResponse(BaseModel):
     
     class Config:
         from_attributes = True
-
-
-class BalanceResponse(BaseModel):
-    """Balance response schema."""
-    balance: float

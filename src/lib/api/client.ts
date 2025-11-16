@@ -3,6 +3,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const TOKEN_KEY = 'auth_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 
+// error schema that is consistent with the backend
 export class APIError extends Error {
   constructor(
     public statusCode: number,
@@ -60,6 +61,8 @@ export const tokenStorage = {
   }
 };
 
+
+// Extends fetch's RequestInit to add custom skipAuth flag
 interface RequestConfig extends RequestInit {
   skipAuth?: boolean;
 }
@@ -67,25 +70,28 @@ interface RequestConfig extends RequestInit {
 class APIClient {
   private baseURL: string;
 
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
+  constructor() {
+    this.baseURL = API_BASE_URL;
   }
 
   /**
-   * Make HTTP request to API with automatic token attachment and error handling.
+   * Core method that handles all HTTP requests.
+   * Automatically adds auth tokens, handles errors, and parses responses.
    */
   private async request<T>(
     endpoint: string,
     config: RequestConfig = {}
   ): Promise<T> {
+    // Extract custom skipAuth flag and separate it from standard fetch options
     const { skipAuth = false, headers = {}, ...restConfig } = config;
 
+    // Build headers object starting with JSON content type
     const requestHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(headers as Record<string, string>),
     };
 
-    // Attach JWT token to Authorization header for authenticated requests
+    // Add JWT token to Authorization header unless skipAuth is true
     if (!skipAuth) {
       const token = tokenStorage.getToken();
       if (token) {
@@ -96,20 +102,21 @@ class APIClient {
     const url = `${this.baseURL}${endpoint}`;
 
     try {
+      // Make the fetch call with all config options (method, body, etc.) and headers
       const response = await fetch(url, {
-        ...restConfig,
+        ...restConfig, // Contains method, body, and other fetch options
         headers: requestHeaders,
       });
 
-      // Handle non-JSON responses
       const contentType = response.headers.get('content-type');
       const isJSON = contentType?.includes('application/json');
 
+      // Handle error responses (status codes 400-599)
       if (!response.ok) {
         if (isJSON) {
           const errorData = await response.json();
           
-          // Handle 401 Unauthorized - token expired or invalid
+          // On 401, clear tokens and redirect to login
           if (response.status === 401) {
             tokenStorage.clearTokens();
             if (typeof window !== 'undefined') {
@@ -131,17 +138,19 @@ class APIClient {
         }
       }
 
+      // Parse and return successful JSON responses
       if (isJSON) {
         return await response.json();
       }
 
       return {} as T;
     } catch (error) {
+      // Re-throw APIErrors as-is
       if (error instanceof APIError) {
         throw error;
       }
 
-      // Network or other errors
+      // Wrap network errors in APIError format
       throw new APIError(
         0,
         'NETWORK_ERROR',
@@ -151,14 +160,16 @@ class APIClient {
   }
 
   /**
-   * Make GET request.
+   * GET request wrapper.
+   * Usage: apiClient.get<User>('/api/users/me')
    */
   async get<T>(endpoint: string, config?: RequestConfig): Promise<T> {
     return this.request<T>(endpoint, { ...config, method: 'GET' });
   }
 
   /**
-   * Make POST request with JSON body.
+   * POST request wrapper. Converts data object to JSON string in body.
+   * Usage: apiClient.post('/api/auth/login', { email, password }, { skipAuth: true })
    */
   async post<T>(
     endpoint: string,
@@ -168,31 +179,9 @@ class APIClient {
     return this.request<T>(endpoint, {
       ...config,
       method: 'POST',
-      body: data ? JSON.stringify(data) : undefined,
+      body: data ? JSON.stringify(data) : undefined, // Converts { email, password } to JSON string
     });
-  }
-
-  /**
-   * Make PUT request with JSON body.
-   */
-  async put<T>(
-    endpoint: string,
-    data?: unknown,
-    config?: RequestConfig
-  ): Promise<T> {
-    return this.request<T>(endpoint, {
-      ...config,
-      method: 'PUT',
-      body: data ? JSON.stringify(data) : undefined,
-    });
-  }
-
-  /**
-   * Make DELETE request.
-   */
-  async delete<T>(endpoint: string, config?: RequestConfig): Promise<T> {
-    return this.request<T>(endpoint, { ...config, method: 'DELETE' });
   }
 }
 
-export const apiClient = new APIClient(API_BASE_URL);
+export const apiClient = new APIClient();
