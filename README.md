@@ -30,11 +30,6 @@ Before you begin, ensure you have the following installed:
 
 ### 1. Clone the Repository
 
-```bash
-git clone <repository-url>
-cd <repository-name>
-```
-
 ### 2. Frontend Setup
 
 ```bash
@@ -50,17 +45,7 @@ cp .env.example .env.local
 
 ### 3. Backend Setup
 
-```bash
-cd backend
-
-# Copy environment file
-cp .env.example .env
-
-# Update .env with your credentials:
-# - SUPABASE_URL
-# - SUPABASE_KEY
-# - ALPHA_VANTAGE_API_KEY
-```
+See [backend/README.md](backend/README.md) for detailed backend documentation.
 
 ### 4. Database Setup
 
@@ -106,13 +91,7 @@ pnpm start
 pnpm lint
 ```
 
-### Backend
-
-See [backend/README.md](backend/README.md) for detailed backend documentation.
-
 ## Environment Variables
-
-### Frontend (.env.local)
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
