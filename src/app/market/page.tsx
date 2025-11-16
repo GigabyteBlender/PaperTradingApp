@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { StockDetailsResponse, MarketStatus as MarketStatusEnum } from '@/lib/types';
+import { StockDetailsResponse } from '@/lib/types';
 import { getStockDetails } from '@/lib/api/stocks';
 import TradeModal from '@/components/TradeModal';
 import StockHeader from './components/StockHeader';
@@ -12,7 +12,7 @@ import StockStats from './components/StockStats';
 import MarketStatus from './components/MarketStatus';
 
 function MarketPageContent() {
-  const { isLoading: isAuthLoading, requireAuth } = useAuth();
+  const { requireAuth } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
   const symbol = searchParams.get('symbol');

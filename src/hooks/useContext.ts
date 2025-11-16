@@ -1,4 +1,4 @@
-import { createContext, useContext, Context } from 'react';
+import { useContext, Context } from 'react';
 
 /**
  * Factory function to create a context hook with automatic error handling.

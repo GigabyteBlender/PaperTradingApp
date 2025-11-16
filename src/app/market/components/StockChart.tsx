@@ -17,13 +17,11 @@ interface ChartData {
 export default function StockChart({ stock }: StockChartProps) {
     const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '1Y'>('1M');
     const [chartData, setChartData] = useState<ChartData[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     // Fetch historical data from API when timeframe or stock changes
     useEffect(() => {
         const fetchHistoricalData = async () => {
-            setIsLoading(true);
             setError(null);
             
             try {
@@ -73,8 +71,6 @@ export default function StockChart({ stock }: StockChartProps) {
             } catch (err) {
                 console.error('Failed to fetch historical data:', err);
                 setError('Failed to load chart data');
-            } finally {
-                setIsLoading(false);
             }
         };
 

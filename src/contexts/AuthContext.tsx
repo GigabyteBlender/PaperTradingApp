@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const userData = await authAPI.getCurrentUser();
         setUser(userData);
-      } catch (error) {
+      } catch {
         tokenStorage.clearTokens();
         setUser(null);
       } finally {
@@ -112,7 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const userData = await authAPI.getCurrentUser();
       setUser(userData);
-    } catch (error) {
+    } catch {
       tokenStorage.clearTokens();
       setUser(null);
       router.push('/login');

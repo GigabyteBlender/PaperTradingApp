@@ -61,6 +61,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
   // Fetch portfolio when user authentication state changes
   useEffect(() => {
     fetchPortfolio();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user?.id]);
 
   const holdings = portfolio?.holdings || [];

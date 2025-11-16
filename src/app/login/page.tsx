@@ -141,7 +141,7 @@ export default function LoginPage() {
 
           {/* Link to signup page */}
           <p className="mt-4 text-center text-sm" style={{ color: 'var(--muted-foreground)' }}>
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/signup" className="font-medium hover:underline" style={{ color: 'var(--primary)' }}>
               Sign up
             </Link>
