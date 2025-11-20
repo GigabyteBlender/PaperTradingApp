@@ -5,7 +5,8 @@ import { formatCurrency } from "@/utils/portfolio";
 import StockSearch from "@/components/StockSearch";
 import { useBalance } from "@/contexts/BalanceContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { Search, X, User, LogOut } from "lucide-react";
+import { Search, X, User, LogOut, BookOpen } from "lucide-react";
+import Link from "next/link";
 
 export default function Header() {
   const { balance, isLoading } = useBalance();
@@ -72,6 +73,15 @@ export default function Header() {
               {isLoading ? '...' : formatCurrency(balance || 0)}
             </span>
           </div>
+
+          {/* Glossary button */}
+          <Link
+            href="/glossary"
+            className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+            aria-label="Financial glossary"
+          >
+            <BookOpen className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+          </Link>
 
           {/* Mobile search button */}
           <button

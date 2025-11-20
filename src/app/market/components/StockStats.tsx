@@ -2,6 +2,8 @@
 
 import { Stock } from '@/lib/types';
 import { formatCurrency, formatNumber } from '@/utils/portfolio';
+import Tooltip from '@/components/Tooltip';
+import { getTermDefinition } from '@/lib/glossary';
 
 interface StockStatsProps {
   stock: Stock;
@@ -16,42 +18,66 @@ export default function StockStats({ stock }: StockStatsProps) {
 
       <div className="space-y-3 md:space-y-4">
         <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-b-0">
-          <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">Previous Close</span>
+          <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">
+            <Tooltip term="Previous Close" definition={getTermDefinition('Previous Close') || ''}>
+              Previous Close
+            </Tooltip>
+          </span>
           <span className="font-medium text-neutral-900 dark:text-white text-sm md:text-base">
             {formatCurrency(stock.previous_close)}
           </span>
         </div>
 
         <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-b-0">
-          <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">Day Range</span>
+          <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">
+            <Tooltip term="Day Range" definition={getTermDefinition('Day Range') || ''}>
+              Day Range
+            </Tooltip>
+          </span>
           <span className="font-medium text-neutral-900 dark:text-white text-sm md:text-base">
             {formatCurrency(stock.day_low)} - {formatCurrency(stock.day_high)}
           </span>
         </div>
 
         <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-b-0">
-          <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">Volume</span>
+          <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">
+            <Tooltip term="Volume" definition={getTermDefinition('Volume') || ''}>
+              Volume
+            </Tooltip>
+          </span>
           <span className="font-medium text-neutral-900 dark:text-white text-sm md:text-base">
             {formatNumber(stock.volume)}
           </span>
         </div>
 
         <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-b-0">
-          <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">Market Cap</span>
+          <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">
+            <Tooltip term="Market Cap" definition={getTermDefinition('Market Cap') || ''}>
+              Market Cap
+            </Tooltip>
+          </span>
           <span className="font-medium text-neutral-900 dark:text-white text-sm md:text-base">
             {formatCurrency(stock.market_cap / 1000000000)}B
           </span>
         </div>
 
         <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-b-0">
-          <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">P/E Ratio</span>
+          <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">
+            <Tooltip term="P/E Ratio" definition={getTermDefinition('P/E Ratio') || ''}>
+              P/E Ratio
+            </Tooltip>
+          </span>
           <span className="font-medium text-neutral-900 dark:text-white text-sm md:text-base">
             {stock.pe_ratio != null ? Number(stock.pe_ratio).toFixed(2) : 'N/A'}
           </span>
         </div>
 
         <div className="flex justify-between items-center py-1.5 md:py-2">
-          <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">Dividend Yield</span>
+          <span className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm">
+            <Tooltip term="Dividend Yield" definition={getTermDefinition('Dividend Yield') || ''}>
+              Dividend Yield
+            </Tooltip>
+          </span>
           <span className="font-medium text-neutral-900 dark:text-white text-sm md:text-base">
             {stock.dividend_yield != null ? `${Number(stock.dividend_yield).toFixed(2)}%` : 'N/A'}
           </span>

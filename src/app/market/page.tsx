@@ -3,9 +3,11 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { StockDetailsResponse } from '@/lib/types';
+import { StockDetailsResponse, Recommendation } from '@/lib/types';
 import { getStockDetails } from '@/lib/api/stocks';
+import { getRecommendation } from '@/lib/api/recommendations';
 import TradeModal from '@/components/TradeModal';
+import RecommendationCard from '@/components/RecommendationCard';
 import StockHeader from './components/StockHeader';
 import StockChart from './components/StockChart';
 import StockStats from './components/StockStats';
@@ -21,6 +23,11 @@ function MarketPageContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
+  
+  // Recommendation state
+  const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
+  const [isRecommendationLoading, setIsRecommendationLoading] = useState(false);
+  const [recommendationError, setRecommendationError] = useState<string | null>(null);
 
   // Fetch stock details from API
   useEffect(() => {
@@ -47,8 +54,37 @@ function MarketPageContent() {
     fetchStockDetails();
   }, [symbol, router]);
 
+  // Fetch recommendation data from API
+  useEffect(() => {
+    if (!symbol) {
+      return;
+    }
+
+    const fetchRecommendation = async () => {
+      setIsRecommendationLoading(true);
+      setRecommendationError(null);
+      
+      try {
+        const rec = await getRecommendation(symbol);
+        setRecommendation(rec);
+      } catch (err) {
+        console.error('Failed to fetch recommendation:', err);
+        setRecommendationError('Unable to load recommendation. Please try again later.');
+      } finally {
+        setIsRecommendationLoading(false);
+      }
+    };
+
+    fetchRecommendation();
+  }, [symbol]);
+
   // Auth context handles redirect, just return null if not authenticated
   if (!requireAuth()) {
+    return null;
+  }
+
+  // Symbol should always exist at this point due to redirect in useEffect
+  if (!symbol) {
     return null;
   }
 
@@ -106,6 +142,12 @@ function MarketPageContent() {
           <StockStats stock={stock} />
           <MarketStatus 
             stock={stock} 
+          />
+          <RecommendationCard
+            symbol={symbol}
+            recommendation={recommendation}
+            isLoading={isRecommendationLoading}
+            error={recommendationError}
           />
         </div>
       </div>

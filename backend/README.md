@@ -17,6 +17,7 @@ FastAPI backend service for the trading application, providing REST API endpoint
 - Docker and Docker Compose
 - Supabase account
 - Alpha Vantage API key
+- OpenAI API key
 
 ## Setup
 
@@ -41,6 +42,11 @@ CORS_ORIGINS=http://localhost:3000,https://your-frontend-domain.com
 # Alpha Vantage API Configuration
 ALPHA_VANTAGE_API_KEY=your-alpha-vantage-api-key
 
+# OpenAI API Configuration
+OPENAI_API_KEY=your-openai-api-key
+OPENAI_MODEL=gpt-4-turbo
+OPENAI_MAX_TOKENS=1000
+
 # Application Configuration
 DEBUG=True
 ```
@@ -62,6 +68,14 @@ DEBUG=True
 #### Alpha Vantage
 1. Sign up at [Alpha Vantage](https://www.alphavantage.co/support/#api-key)
 2. Get your free API key (500 requests/day)
+
+#### OpenAI
+1. Sign up at [OpenAI Platform](https://platform.openai.com)
+2. Navigate to API keys section
+3. Create a new API key
+4. Copy the key to `.env` (keep it secure, never commit it)
+5. Note: The recommendation system uses GPT-4 Turbo for stock analysis
+6. Monitor your usage at [OpenAI Usage Dashboard](https://platform.openai.com/usage)
 
 ## Running the Application
 
@@ -173,6 +187,9 @@ Set these environment variables in production:
 - `SUPABASE_URL`
 - `SUPABASE_KEY`
 - `ALPHA_VANTAGE_API_KEY`
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL` (default: gpt-4-turbo)
+- `OPENAI_MAX_TOKENS` (default: 1000)
 - `CORS_ORIGINS` (your frontend URL)
 - `DEBUG=False`
 
@@ -208,6 +225,13 @@ lsof -i :8000
 
 - Free tier: very limited requests/day
 - Consider upgrading to premium tier if needed
+
+### OpenAI API Costs
+
+- GPT-4 Turbo charges per token (input and output)
+- Recommendations are cached for 15 minutes to reduce costs
+- Monitor usage in OpenAI dashboard to avoid unexpected charges
+- Consider setting usage limits in OpenAI account settings
 
 ## Security Considerations
 

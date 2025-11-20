@@ -1,6 +1,8 @@
 'use client';
 
 import { Stock } from '@/lib/types';
+import Tooltip from '@/components/Tooltip';
+import { getTermDefinition } from '@/lib/glossary';
 
 interface MarketStatusProps {
   stock: Stock;
@@ -12,7 +14,9 @@ export default function MarketStatus({ stock }: MarketStatusProps) {
       {/* Market Status */}
       <div className="bg-white dark:bg-neutral-800 rounded-lg md:rounded-xl p-4 md:p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-md transition-shadow">
         <h3 className="text-base md:text-lg font-semibold text-neutral-900 dark:text-white mb-3 md:mb-4">
-          Market Status
+          <Tooltip term="Market Status" definition={getTermDefinition('Market Status') || ''}>
+            Market Status
+          </Tooltip>
         </h3>
 
         <div className="flex items-center">

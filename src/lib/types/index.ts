@@ -127,3 +127,20 @@ export enum TransactionType {
 
 // Frontend Stock type (camelCase for UI components)
 export type Stock = StockDetailsResponse;
+
+// Recommendation types
+export interface Factor {
+  name: string;
+  description: string;
+  impact: 'positive' | 'neutral' | 'negative';
+}
+
+export interface Recommendation {
+  symbol: string;
+  recommendation: 'buy' | 'hold' | 'sell';
+  score: number;
+  reasoning: string;
+  factors: Factor[];
+  calculated_at: string;
+  is_stale: boolean;
+}

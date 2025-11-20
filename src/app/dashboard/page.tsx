@@ -22,7 +22,6 @@ export default function Dashboard() {
 
   /**
    * Fetch transaction history from API.
-   * Migrated from localStorage to backend API for persistent storage.
    */
   useEffect(() => {
     const fetchTransactions = async () => {

@@ -20,3 +20,6 @@ pydantic-settings==2.5.2
 
 # Timezone handling
 pytz==2024.1
+
+# OpenAI API for stock recommendations
+openai>=1.0.0

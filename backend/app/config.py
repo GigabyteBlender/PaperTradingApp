@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     # Alpha Vantage API configuration
     ALPHA_VANTAGE_API_KEY: str = ""
     
+    # OpenAI API configuration
+    OPENAI_API_KEY: str = ""
+    OPENAI_MODEL: str = "gpt-4-turbo"
+    OPENAI_MAX_TOKENS: int = 1000
+    
     # Application configuration
     APP_NAME: str = "Trading Application API"
     DEBUG: bool = False

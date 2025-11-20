@@ -15,7 +15,7 @@ interface ChartData {
 }
 
 export default function StockChart({ stock }: StockChartProps) {
-    const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '1Y'>('1M');
+    const [timeframe, setTimeframe] = useState<'1D' | '5D' | '1M' | '3M' | '1Y' | '5Y'>('1M');
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const [error, setError] = useState<string | null>(null);
 
@@ -32,6 +32,7 @@ export default function StockChart({ stock }: StockChartProps) {
                     '1M': '1mo',
                     '3M': '3mo',
                     '1Y': '1y',
+                    '5Y': '5y',
                 };
                 
                 const period = periodMap[timeframe];
@@ -88,7 +89,7 @@ export default function StockChart({ stock }: StockChartProps) {
                 </h2>
 
                 <div className="flex bg-neutral-100 dark:bg-neutral-700 rounded-lg p-1 overflow-x-auto">
-                    {(['1D', '5D', '1M', '3M', '1Y'] as const).map((tf) => (
+                    {(['1D', '5D', '1M', '3M', '1Y', '5Y'] as const).map((tf) => (
                         <button
                             key={tf}
                             onClick={() => setTimeframe(tf)}
