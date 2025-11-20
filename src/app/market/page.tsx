@@ -7,7 +7,7 @@ import { StockDetailsResponse, Recommendation } from '@/lib/types';
 import { getStockDetails } from '@/lib/api/stocks';
 import { getRecommendation } from '@/lib/api/recommendations';
 import TradeModal from '@/components/TradeModal';
-import RecommendationCard from '@/components/RecommendationCard';
+import RecommendationCard from '@/app/market/components/RecommendationCard';
 import StockHeader from './components/StockHeader';
 import StockChart from './components/StockChart';
 import StockStats from './components/StockStats';

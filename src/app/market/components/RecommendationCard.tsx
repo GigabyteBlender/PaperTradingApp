@@ -148,7 +148,7 @@ export default function RecommendationCard({
 
       {/* Recommendation badge and score */}
       <div className={`${style.bgColor} ${style.borderColor} border rounded-lg p-4 mb-4`}>
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between ">
           <span className={`${style.badgeColor} text-white px-3 py-1 rounded-full text-sm font-semibold uppercase`}>
             {recommendation.recommendation}
           </span>
