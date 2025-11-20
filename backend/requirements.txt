@@ -22,4 +22,4 @@ pydantic-settings==2.5.2
 pytz==2024.1
 
 # OpenAI API for stock recommendations
-openai>=1.0.0
+openai==2.8.1

@@ -21,12 +21,6 @@ class RecommendationCache:
     """
     In-memory cache for recommendation data to reduce OpenAI API calls.
     Follows the same pattern as StockCache in stock_service.py
-    
-    Cache TTL:
-    - recommendation: 15 minutes (per requirements 4.5)
-    
-    The cache stores recommendation data with expiration timestamps to ensure
-    users receive reasonably fresh analysis while minimizing expensive API calls.
     """
     
     def __init__(self):
@@ -38,13 +32,6 @@ class RecommendationCache:
     def get(self, key: str, data_type: str = "recommendation") -> Optional[dict]:
         """
         Retrieve cached data if not expired.
-        
-        Args:
-            key (str): Cache key (typically stock symbol)
-            data_type (str): Type of cached data (default: "recommendation")
-        
-        Returns:
-            Optional[dict]: Cached data if found and not expired, None otherwise
         """
         cache_key = f"{data_type}:{key}"
         if cache_key in self.cache:
@@ -59,11 +46,6 @@ class RecommendationCache:
     def set(self, key: str, data_type: str, data: dict):
         """
         Store data in cache with TTL.
-        
-        Args:
-            key (str): Cache key (typically stock symbol)
-            data_type (str): Type of data being cached
-            data (dict): Data to cache
         """
         cache_key = f"{data_type}:{key}"
         self.cache[cache_key] = {
@@ -79,35 +61,15 @@ _recommendation_cache = RecommendationCache()
 
 async def get_recommendation(symbol: str) -> Recommendation:
     """
-    Generate or retrieve cached stock recommendation for a given symbol.
+    Generate AI-powered stock recommendation for a given symbol.
     
-    This function orchestrates the recommendation generation process:
+    Process:
     1. Check cache for existing recommendation
     2. If cache miss, fetch stock details from Alpha Vantage
     3. Build analysis prompt with stock data
     4. Call OpenAI API for AI-powered analysis
     5. Parse response and create Recommendation object
     6. Cache result for 15 minutes
-    
-    Args:
-        symbol (str): Stock ticker symbol (e.g., "AAPL", "TSLA")
-    
-    Returns:
-        Recommendation: Complete recommendation with score, reasoning, and factors
-    
-    Raises:
-        ValueError: If the stock symbol is invalid, not found, or API errors occur
-        Exception: If Alpha Vantage or OpenAI API calls fail
-    
-    Requirements:
-        - 1.1: Display recommendation status (buy/hold/sell)
-        - 1.2: Display recommendation score (0-100)
-        - 1.3: Analyze minimum three stock metrics
-        - 4.1: Provide stock data to OpenAI API
-        - 4.2: Receive score and justification from OpenAI
-        - 4.4: Handle Alpha Vantage errors with cached data fallback
-        - 4.5: Cache recommendations for 15 minutes
-        - 4.6: Handle OpenAI errors appropriately
     """
     # Check cache first to avoid unnecessary API calls
     cached = _recommendation_cache.get(symbol, "recommendation")
@@ -119,34 +81,18 @@ async def get_recommendation(symbol: str) -> Recommendation:
         cached["is_stale"] = is_stale
         return Recommendation(**cached)
     
-    # Cache miss - fetch fresh stock details from Alpha Vantage
-    logger.info(f"Cache miss for {symbol}, fetching stock details")
-    
     try:
         stock_details = await get_stock_details(symbol)
     except ValueError as e:
-        # Handle invalid symbol (404 error) - per requirement 4.4
+        # Handle invalid symbol (404 error)
         logger.error(f"Invalid stock symbol {symbol}: {str(e)}")
         raise ValueError(f"Stock symbol '{symbol}' not found")
     except Exception as e:
-        # Handle Alpha Vantage API errors - per requirement 4.4
-        # Try to return cached data if available, even if expired
+        # Handle Alpha Vantage API errors
         logger.error(f"Alpha Vantage API error for {symbol}: {str(e)}")
-        
-        # Check if we have any cached data (even if expired)
-        cache_key = f"recommendation:{symbol}"
-        if cache_key in _recommendation_cache.cache:
-            cached_data = _recommendation_cache.cache[cache_key]["data"]
-            logger.warning(f"Returning stale cached data for {symbol} due to API error")
-            cached_data["is_stale"] = True
-            return Recommendation(**cached_data)
-        
-        # No cached data available - return 502 error
-        logger.error(f"No cached data available for {symbol}, cannot recover from API error")
         raise Exception("Stock data unavailable - Alpha Vantage API error")
     
-    # Build simple prompt with key stock metrics
-    # Include: symbol, current price, change, volume, market cap, P/E ratio
+    # Build analysis prompt with key stock metrics
     prompt = f"""Analyze the following stock data for {stock_details.symbol} ({stock_details.name}):
 
 Current Price: ${stock_details.current_price}
@@ -156,11 +102,6 @@ Volume: {stock_details.volume if stock_details.volume else 'N/A'}
 Market Cap: ${stock_details.market_cap if stock_details.market_cap else 'N/A'}
 P/E Ratio: {stock_details.pe_ratio if stock_details.pe_ratio else 'N/A'}
 
-Based on this data, provide a stock recommendation with a score between 0-100 where:
-- 0-33 = Sell
-- 34-66 = Hold  
-- 67-100 = Buy
-
 Consider the price movement, volume, and valuation metrics in your analysis."""
 
     # Call OpenAI service to analyze the stock
@@ -169,21 +110,20 @@ Consider the price movement, volume, and valuation metrics in your analysis."""
     try:
         ai_response = await analyze_stock(prompt)
     except ValueError as e:
-        # Handle OpenAI response parsing errors - per requirement 4.6
+        # Handle OpenAI response parsing errors
         logger.error(f"OpenAI response parsing error for {symbol}: {str(e)}")
         raise Exception(f"Recommendation service unavailable - Invalid AI response: {str(e)}")
     except Exception as e:
-        # Handle OpenAI API errors - per requirement 4.6
+        # Handle OpenAI API errors
         logger.error(f"OpenAI API error for {symbol}: {str(e)}")
         raise Exception(f"Recommendation service unavailable - OpenAI API error: {str(e)}")
     
     # Parse the AI response
-    # Expected format: {"score": int, "reasoning": str, "factors": [{"name": str, "description": str, "impact": str}]}
     score = ai_response["score"]
     reasoning = ai_response["reasoning"]
     
     # Determine recommendation type based on score
-    # 0-33: Sell, 34-66: Hold, 67-100: Buy (per requirements 1.4, 1.5, 1.6)
+    # 0-33: Sell, 34-66: Hold, 67-100: Buy
     if score <= 33:
         recommendation_type = "sell"
     elif score <= 66:

@@ -12,6 +12,7 @@ import StockHeader from './components/StockHeader';
 import StockChart from './components/StockChart';
 import StockStats from './components/StockStats';
 import MarketStatus from './components/MarketStatus';
+import PriceCard from './components/PriceCard';
 
 function MarketPageContent() {
   const { requireAuth } = useAuth();
@@ -133,21 +134,22 @@ function MarketPageContent() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
         {/* Chart Section */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6">
           <StockChart stock={stock} />
-        </div>
-
-        {/* Stock Details */}
-        <div className="space-y-4 md:space-y-6">
-          <StockStats stock={stock} />
-          <MarketStatus 
-            stock={stock} 
-          />
           <RecommendationCard
             symbol={symbol}
             recommendation={recommendation}
             isLoading={isRecommendationLoading}
             error={recommendationError}
+          />
+        </div>
+
+        {/* Stock Details */}
+        <div className="space-y-4 md:space-y-6">
+          <PriceCard stock={stock} />
+          <StockStats stock={stock} />
+          <MarketStatus 
+            stock={stock} 
           />
         </div>
       </div>

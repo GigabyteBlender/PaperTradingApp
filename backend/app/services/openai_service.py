@@ -1,15 +1,13 @@
 """
 OpenAI service for AI-powered stock analysis and recommendations.
-
-This module provides integration with OpenAI's API to generate intelligent
-stock recommendations based on market data and technical indicators.
 """
 
-import json
 import logging
 from typing import Dict, Any
 from openai import AsyncOpenAI
+from pydantic import ValidationError
 from app.config import settings
+from app.schemas.recommendation import Factor
 
 logger = logging.getLogger(__name__)
 
@@ -19,68 +17,84 @@ _openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
 async def analyze_stock(prompt: str) -> Dict[str, Any]:
     """
-    Analyze stock data using OpenAI's GPT model and return recommendation.
-    Sends stock market data to the API and receives an AI-generated score,
-    reasoning, and contributing factors (data returned in JSON format).
+    Analyze stock data using OpenAI and return structured recommendation.
     """
     try:
-        # System prompt defines the AI's role and response format
-        system_prompt = """You are a financial analyst AI that provides stock recommendations based on technical analysis. 
-Analyze the provided stock data and technical indicators to generate a recommendation score 
-between 0 and 100, where:
-- 0-33: Sell recommendation
-- 34-66: Hold recommendation  
-- 67-100: Buy recommendation
+        # Define the response schema
+        response_format = {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "stock_recommendation",
+                "strict": True,
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "score": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 100
+                        },
+                        "reasoning": {
+                            "type": "string"
+                        },
+                        "factors": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {"type": "string"},
+                                    "description": {"type": "string"},
+                                    "impact": {"type": "string", "enum": ["positive", "neutral", "negative"]}
+                                },
+                                "required": ["name", "description", "impact"],
+                                "additionalProperties": False
+                            },
+                            "minItems": 1,
+                            "maxItems": 5
+                        }
+                    },
+                    "required": ["score", "reasoning", "factors"],
+                    "additionalProperties": False
+                }
+            }
+        }
 
-Provide your analysis in the following JSON format:
-{
-  "score": <number 0-100>,
-  "reasoning": "<2-3 sentence explanation>",
-  "factors": [
-    {
-      "name": "<factor name>",
-      "description": "<brief explanation>",
-      "impact": "<positive|neutral|negative>"
-    }
-  ]
-}
+        system_prompt = """You are a financial analyst AI. Analyze the stock data and provide:
+- score: integer 0-100 (0-33=sell, 34-66=hold, 67-100=buy)  
+- reasoning: 2-3 sentence explanation
+- factors: 1-5 key factors with name, description, and impact (positive/neutral/negative)
 
-Base your analysis on technical indicators, price trends, and volume patterns. 
-Be objective and data-driven. Do not provide financial advice."""
+Base analysis on technical indicators, trends, and volume. Be objective."""
 
-        # Call OpenAI API with configured parameters from settings
-        # temperature=0.7 for balanced responses
-        # max_tokens from config (default 1000) for structured response
+        # wait for response completion
         response = await _openai_client.chat.completions.create(
-            model=settings.OPENAI_MODEL,  # Model from config (default: gpt-4-turbo)
+            model=settings.OPENAI_MODEL,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.7,  # Balanced creativity and consistency
-            max_tokens=settings.OPENAI_MAX_TOKENS,  # Max tokens from config
-            response_format={"type": "json_object"}  # Ensure JSON response
+            response_format=response_format,
+            temperature=0.3,
+            max_tokens=settings.OPENAI_MAX_TOKENS
         )
         
-        # Extract the response content from the API response
+        # Parse the JSON content from the response
+        import json
         content = response.choices[0].message.content
+        result = json.loads(content)
         
-        # Parse the JSON response from OpenAI
-        # The AI is instructed to return structured JSON with score, reasoning, and factors
-        try:
-            result = json.loads(content)
-        except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse OpenAI response as JSON: {content}")
-            raise ValueError(f"Invalid JSON response from OpenAI: {str(e)}")
+        # Validate factors using Pydantic
+        validated_factors = []
+        for factor in result["factors"]:
+            validated_factor = Factor(**factor)
+            validated_factors.append(validated_factor.model_dump())
         
-        # Validate that required fields are present
-        if "score" not in result or "reasoning" not in result or "factors" not in result:
-            logger.error(f"OpenAI response missing required fields: {result}")
-            raise ValueError("OpenAI response missing required fields (score, reasoning, or factors)")
-        
-        logger.info(f"Successfully analyzed stock with score: {result['score']}")
-        return result
+        return {
+            "score": result["score"],
+            "reasoning": result["reasoning"],
+            "factors": validated_factors
+        }
         
     except Exception as e:
-        logger.error(f"OpenAI API error: {str(e)}")
+        logger.error(f"OpenAI analysis failed: {str(e)}")
         raise

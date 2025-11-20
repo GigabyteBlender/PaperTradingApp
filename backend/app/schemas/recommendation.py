@@ -23,7 +23,6 @@ class Recommendation(BaseModel):
     """
     Stock recommendation with AI-generated analysis.
     Provides buy/hold/sell guidance based on technical analysis and market data.
-    Includes a numerical score (0-100) and natural language explanation.
     """
     symbol: str = Field(..., description="Stock ticker symbol")
     recommendation: Literal["buy", "hold", "sell"] = Field(..., description="Recommendation type")

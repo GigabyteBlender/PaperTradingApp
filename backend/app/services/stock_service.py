@@ -160,24 +160,19 @@ async def get_stock_details(symbol: str) -> StockDetails:
     # Combines real-time price data with company fundamentals
     details = StockDetails(
         symbol=symbol.upper(),
-        name=overview_data.get("Name", symbol.upper()),  # Company name from OVERVIEW
+        name=overview_data.get("Name", symbol.upper()),
         current_price=current_price,
         previous_close=previous_close,
         change=change,
         change_percent=change_percent,
         last_update=datetime.utcnow(),
         market_status=market_status_info.status,
-        # Trading volume for the day
-        volume=int(quote.get("06. volume", 0)) if quote.get("06. volume") else None,
-        # Intraday high and low prices
-        day_high=Decimal(quote.get("03. high", "0")) if quote.get("03. high") else None,
-        day_low=Decimal(quote.get("04. low", "0")) if quote.get("04. low") else None,
-        # Company fundamentals from OVERVIEW endpoint
-        market_cap=Decimal(overview_data.get("MarketCapitalization", "0")) if overview_data.get("MarketCapitalization") else None,
-        # P/E ratio - handle invalid values like "None", "-", or empty strings
-        pe_ratio=Decimal(overview_data.get("PERatio", "0")) if overview_data.get("PERatio") and overview_data.get("PERatio") not in ["None", "-", ""] else None,
-        # Dividend yield - handle invalid values
-        dividend_yield=Decimal(overview_data.get("DividendYield", "0")) if overview_data.get("DividendYield") and overview_data.get("DividendYield") not in ["None", "-", ""] else None
+        volume=quote.get("06. volume"),
+        day_high=quote.get("03. high"),
+        day_low=quote.get("04. low"),
+        market_cap=overview_data.get("MarketCapitalization"),
+        pe_ratio=overview_data.get("PERatio"),
+        dividend_yield=overview_data.get("DividendYield")
     )
     
     # Cache the result for 5 minutes to reduce API calls
