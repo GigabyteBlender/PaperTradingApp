@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     
     # OpenAI API configuration
     OPENAI_API_KEY: str = ""
-    OPENAI_MODEL: str = "gpt-4-turbo"
+    OPENAI_MODEL: str = "gpt-4o"
     OPENAI_MAX_TOKENS: int = 1000
     
     # Application configuration

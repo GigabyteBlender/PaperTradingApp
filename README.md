@@ -113,13 +113,14 @@ Once the backend is running, visit:
 
 ## Features
 
-- User authentication and authorization
-- Real-time stock price data
-- Portfolio management
-- Buy/sell trading functionality
-- Transaction history
-- Performance analytics and charts
-- Responsive design
+- **Authentication**: Secure user signup/login with Supabase Auth and JWT tokens
+- **Real-time Stock Data**: Live stock quotes, detailed fundamentals, and historical charts via Alpha Vantage API
+- **Portfolio Management**: Track holdings with real-time valuations, profit/loss calculations, and performance metrics
+- **Trading**: Execute buy/sell transactions with atomic processing and balance validation
+- **Transaction History**: Paginated transaction records with full audit trail
+- **AI Recommendations**: OpenAI-powered stock analysis with buy/hold/sell guidance and scoring
+- **Market Status**: Real-time market hours and trading status indicators
+- **Responsive Design**: Mobile-friendly interface built with Tailwind CSS
 
 ## Troubleshooting
 

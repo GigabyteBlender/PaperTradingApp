@@ -85,25 +85,25 @@ export default function HoldingsTable({ portfolio, isLoading = false, onTradeCom
               // Loading skeleton rows
               [...Array(4)].map((_, i) => (
                 <tr key={i} className="animate-pulse">
-                  <td className="px-3 md:px-6 py-3 md:py-4">
+                  <td className="px-3 md:px-6 py-2 md:py-3">
                     <div className="h-3 bg-neutral-200 dark:bg-neutral-600 rounded w-12 md:w-16"></div>
                   </td>
-                  <td className="hidden sm:table-cell px-3 md:px-6 py-3 md:py-4">
+                  <td className="hidden sm:table-cell px-3 md:px-6 py-2 md:py-3">
                     <div className="h-3 bg-neutral-200 dark:bg-neutral-600 rounded w-32 md:w-40"></div>
                   </td>
-                  <td className="px-3 md:px-6 py-3 md:py-4">
+                  <td className="px-3 md:px-6 py-2 md:py-3">
                     <div className="h-3 bg-neutral-200 dark:bg-neutral-600 rounded w-10 md:w-12"></div>
                   </td>
-                  <td className="hidden lg:table-cell px-3 md:px-6 py-3 md:py-4">
+                  <td className="hidden lg:table-cell px-3 md:px-6 py-2 md:py-3">
                     <div className="h-3 bg-neutral-200 dark:bg-neutral-600 rounded w-16 md:w-20"></div>
                   </td>
-                  <td className="px-3 md:px-6 py-3 md:py-4">
+                  <td className="px-3 md:px-6 py-2 md:py-3">
                     <div className="h-3 bg-neutral-200 dark:bg-neutral-600 rounded w-16 md:w-24"></div>
                   </td>
-                  <td className="px-3 md:px-6 py-3 md:py-4">
+                  <td className="px-3 md:px-6 py-2 md:py-3">
                     <div className="h-3 bg-neutral-200 dark:bg-neutral-600 rounded w-12 md:w-16"></div>
                   </td>
-                  <td className="hidden md:table-cell px-3 md:px-6 py-3 md:py-4 text-center">
+                  <td className="hidden md:table-cell px-3 md:px-6 py-2 md:py-3 text-center">
                     <div className="h-7 bg-neutral-200 dark:bg-neutral-600 rounded-lg w-16 mx-auto"></div>
                   </td>
                 </tr>
@@ -123,28 +123,28 @@ export default function HoldingsTable({ portfolio, isLoading = false, onTradeCom
                   onClick={() => handleViewStock(holding.symbol)}
                   className="hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer transition-all duration-200 hover:shadow-sm group"
                 >
-                  <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-mono text-neutral-900 dark:text-neutral-100 whitespace-nowrap font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <td className="px-3 md:px-6 py-2 md:py-3 text-xs md:text-sm font-mono text-neutral-900 dark:text-neutral-100 whitespace-nowrap font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {holding.symbol}
                   </td>
-                  <td className="hidden sm:table-cell px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-neutral-700 dark:text-neutral-300 whitespace-nowrap">
+                  <td className="hidden sm:table-cell px-3 md:px-6 py-2 md:py-3 text-xs md:text-sm text-neutral-700 dark:text-neutral-300 whitespace-nowrap">
                     {holding.company_name}
                   </td>
-                  <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-left text-neutral-700 dark:text-neutral-300">
+                  <td className="px-3 md:px-6 py-2 md:py-3 text-xs md:text-sm text-left text-neutral-700 dark:text-neutral-300">
                     {holding.shares.toLocaleString()}
                   </td>
-                  <td className="hidden lg:table-cell px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-left text-neutral-700 dark:text-neutral-300">
+                  <td className="hidden lg:table-cell px-3 md:px-6 py-2 md:py-3 text-xs md:text-sm text-left text-neutral-700 dark:text-neutral-300">
                     {formatCurrency(holding.current_price)}
                   </td>
-                  <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-left text-neutral-900 dark:text-neutral-100 font-semibold">
+                  <td className="px-3 md:px-6 py-2 md:py-3 text-xs md:text-sm text-left text-neutral-900 dark:text-neutral-100 font-semibold">
                     {formatCurrency(holding.current_value)}
                   </td>
-                  <td className={`px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-left font-semibold ${holding.unrealized_pl < 0
+                  <td className={`px-3 md:px-6 py-2 md:py-3 text-xs md:text-sm text-left font-semibold ${holding.unrealized_pl < 0
                     ? "text-red-600 dark:text-red-400"
                     : "text-green-600 dark:text-green-400"
                     }`}>
                     {formatPercentage(holding.unrealized_pl_percent)}
                   </td>
-                  <td className="hidden md:table-cell px-3 md:px-6 py-3 md:py-4 text-center">
+                  <td className="hidden md:table-cell px-3 md:px-6 py-2 md:py-3 text-center">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

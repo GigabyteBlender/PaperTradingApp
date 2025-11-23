@@ -1,55 +1,29 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { glossaryTerms, type GlossaryTerm } from '@/lib/glossary';
+import { glossaryTerms } from '@/lib/glossary';
 
 export default function GlossaryPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Filter and sort terms alphabetically
+  // Filter and sort terms based on search query
+  // When no search query is provided, display all terms alphabetically
   const filteredTerms = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
     
     if (!query) {
-      // Return all terms sorted alphabetically
+      // No search query: return all terms sorted alphabetically by term name
       return [...glossaryTerms].sort((a, b) => 
         a.term.localeCompare(b.term)
       );
     }
 
-    // Filter terms that match search query
+    // Search query provided: filter terms where the query appears in the
+    // term name (case-insensitive), then sort alphabetically
     return glossaryTerms
-      .filter(
-        (term) =>
-          term.term.toLowerCase().includes(query) ||
-          term.definition.toLowerCase().includes(query)
-      )
+      .filter((term) => term.term.toLowerCase().includes(query))
       .sort((a, b) => a.term.localeCompare(b.term));
   }, [searchQuery]);
-
-  // Get category display name
-  const getCategoryName = (category: GlossaryTerm['category']) => {
-    const names = {
-      price: 'Price',
-      volume: 'Volume',
-      fundamental: 'Fundamental',
-      technical: 'Technical',
-      market: 'Market',
-    };
-    return names[category];
-  };
-
-  // Get category color
-  const getCategoryColor = (category: GlossaryTerm['category']) => {
-    const colors = {
-      price: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-      volume: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
-      fundamental: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-      technical: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-      market: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300',
-    };
-    return colors[category];
-  };
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
@@ -57,18 +31,15 @@ export default function GlossaryPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
-            Financial Glossary
+            Glossary
           </h1>
-          <p className="text-neutral-600 dark:text-neutral-400">
-            Learn the meaning of financial terms used throughout the application
-          </p>
         </div>
 
         {/* Search Input */}
         <div className="mb-8">
           <input
             type="text"
-            placeholder="Search terms or definitions..."
+            placeholder="Search terms..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full px-4 py-3 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400"
@@ -93,18 +64,9 @@ export default function GlossaryPage() {
                 key={term.term}
                 className="bg-white dark:bg-neutral-800 rounded-lg p-6 border border-neutral-200 dark:border-neutral-700 hover:shadow-lg transition-shadow"
               >
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                    {term.term}
-                  </h3>
-                  <span
-                    className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(
-                      term.category
-                    )}`}
-                  >
-                    {getCategoryName(term.category)}
-                  </span>
-                </div>
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-3">
+                  {term.term}
+                </h3>
                 <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
                   {term.definition}
                 </p>

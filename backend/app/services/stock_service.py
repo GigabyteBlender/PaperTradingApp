@@ -305,7 +305,9 @@ async def get_historical_data(symbol: str, period: str = "1mo") -> List[Historic
         response.raise_for_status()
         data = response.json()
     
+    # Log the response to debug API issues
     if "Time Series (Daily)" not in data:
+        logger.warning(f"Alpha Vantage response for {symbol}: {data}")
         raise ValueError(f"No historical data found for symbol '{symbol}'")
     
     time_series = data["Time Series (Daily)"]

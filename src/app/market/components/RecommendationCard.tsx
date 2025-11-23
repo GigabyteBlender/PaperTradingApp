@@ -26,7 +26,7 @@ export default function RecommendationCard({
   isLoading,
   error,
 }: RecommendationCardProps) {
-  // Loading skeleton
+  // Displays loading skeleton
   if (isLoading) {
     return (
       <div className="bg-white dark:bg-neutral-800 rounded-lg md:rounded-xl p-4 md:p-6 border border-neutral-200 dark:border-neutral-700 shadow-sm">
