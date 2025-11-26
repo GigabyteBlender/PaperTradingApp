@@ -126,16 +126,16 @@ ALTER TABLE holdings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for users table
-CREATE POLICY "Users can view own data" ON users FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users can insert own data" ON users FOR INSERT WITH CHECK (auth.uid() = id);
-CREATE POLICY "Users can update own data" ON users FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Users can view own data" ON users FOR SELECT USING ((select auth.uid()) = id);
+CREATE POLICY "Users can insert own data" ON users FOR INSERT WITH CHECK ((select auth.uid()) = id);
+CREATE POLICY "Users can update own data" ON users FOR UPDATE USING ((select auth.uid()) = id);
 
 -- RLS Policies for holdings table
-CREATE POLICY "Users can view own holdings" ON holdings FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own holdings" ON holdings FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update own holdings" ON holdings FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Users can delete own holdings" ON holdings FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "Users can view own holdings" ON holdings FOR SELECT USING ((select auth.uid()) = user_id);
+CREATE POLICY "Users can insert own holdings" ON holdings FOR INSERT WITH CHECK ((select auth.uid()) = user_id);
+CREATE POLICY "Users can update own holdings" ON holdings FOR UPDATE USING ((select auth.uid()) = user_id);
+CREATE POLICY "Users can delete own holdings" ON holdings FOR DELETE USING ((select auth.uid()) = user_id);
 
 -- RLS Policies for transactions table
-CREATE POLICY "Users can view own transactions" ON transactions FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own transactions" ON transactions FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can view own transactions" ON transactions FOR SELECT USING ((select auth.uid()) = user_id);
+CREATE POLICY "Users can insert own transactions" ON transactions FOR INSERT WITH CHECK ((select auth.uid()) = user_id);
