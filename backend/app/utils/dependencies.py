@@ -27,7 +27,7 @@ async def get_current_user(
         
         auth_user = user_response.user
         
-        # Fetch app-specific user data
+        # Fetch user data from users table not from supabase auth
         app_user = supabase.table("users").select("*").eq("id", auth_user.id).single().execute()
         
         if not app_user.data:

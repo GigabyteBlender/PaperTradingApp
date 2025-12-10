@@ -313,7 +313,6 @@ async def get_historical_data(symbol: str, period: str = "1mo") -> List[Historic
     time_series = data["Time Series (Daily)"]
     
     # Calculate date range based on period (add extra days to account for weekends)
-    end_date = datetime.utcnow()
     if period == "5d":
         start_date = end_date - timedelta(days=10)  # ~2 weeks to ensure 5 trading days
     elif period == "1mo":
@@ -379,11 +378,11 @@ def get_market_status() -> MarketStatus:
     if not is_weekday:
         status = "closed"
         is_open = False
-        # Calculate next Monday's opening time
-        # weekday() returns 0=Monday, 5=Saturday, 6=Sunday
+        # Calculate days until next Monday (weekday() returns 0=Monday, 5=Saturday, 6=Sunday)
         days_until_monday = (7 - now_et.weekday()) % 7
-        if days_until_monday == 0:  # If today is Monday, go to next Monday
+        if days_until_monday == 0:  # Today is Monday, advance to next Monday
             days_until_monday = 1
+        # Add calculated days to get next Monday, then combine with market open time
         next_open_date = now_et + timedelta(days=days_until_monday)
         next_open = et_tz.localize(datetime.combine(next_open_date.date(), market_open))
         next_close = None
@@ -393,14 +392,14 @@ def get_market_status() -> MarketStatus:
         status = "open"
         is_open = True
         next_open = None  # Already open, no next open time
-        # Market will close today at 4:00 PM ET
+        # Combine today's date with market close time
         next_close = et_tz.localize(datetime.combine(now_et.date(), market_close))
     
     # Pre-market hours (4:00 AM - 9:30 AM ET)
     elif pre_market_start <= current_time < market_open:
         status = "pre-market"
         is_open = False  # Pre-market trading available but regular market closed
-        # Market opens later today at 9:30 AM ET
+        # Combine today's date with market open time
         next_open = et_tz.localize(datetime.combine(now_et.date(), market_open))
         next_close = None
     
@@ -408,7 +407,7 @@ def get_market_status() -> MarketStatus:
     elif market_close <= current_time < after_hours_end:
         status = "after-hours"
         is_open = False  # After-hours trading available but regular market closed
-        # Market opens next trading day at 9:30 AM ET
+        # Add one day to get tomorrow, then combine with market open time
         next_open_date = now_et + timedelta(days=1)
         next_open = et_tz.localize(datetime.combine(next_open_date.date(), market_open))
         next_close = None
@@ -417,7 +416,7 @@ def get_market_status() -> MarketStatus:
     else:
         status = "closed"
         is_open = False
-        # Market opens next trading day at 9:30 AM ET
+        # Add one day to get tomorrow, then combine with market open time
         next_open_date = now_et + timedelta(days=1)
         next_open = et_tz.localize(datetime.combine(next_open_date.date(), market_open))
         next_close = None

@@ -8,8 +8,8 @@ from typing import Optional, List, Literal
 
 class StockQuote(BaseModel):
     """
-    Real-time stock quote with current price and change metrics.
-    Used for lightweight price checks and portfolio calculations.
+    Stock with current price and change metrics.
+    Used for price checks and portfolio calculations.
     """
     symbol: str
     current_price: Decimal

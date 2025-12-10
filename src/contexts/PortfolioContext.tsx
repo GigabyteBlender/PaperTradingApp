@@ -25,8 +25,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
 
   /**
    * Fetch portfolio data from API.
-   * Retrieves complete portfolio with calculated metrics and holdings.
-   * Migrated from localStorage to backend API for persistent storage.
+   * Retrieves all portfolio data: calculated metrics and holdings.
    */
   const fetchPortfolio = async () => {
     if (!isAuthenticated) {
@@ -84,6 +83,5 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
 
 /**
  * Hook to access portfolio context.
- * Must be used within PortfolioProvider.
  */
 export const usePortfolio = createContextHook(PortfolioContext, 'Portfolio');
