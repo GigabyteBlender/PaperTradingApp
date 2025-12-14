@@ -17,7 +17,7 @@ interface TradeModalProps {
 
 export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: TradeModalProps) {
   const [tradeType, setTradeType] = useState<TransactionType>(TransactionType.BUY);
-  const [shares, setShares] = useState<number>(1);
+  const [shares, setShares] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -63,7 +63,7 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
       await refreshPortfolio();
 
       // Reset form and close modal
-      setShares(1);
+      setShares(0);
       setError(null);
       onTradeComplete();
       onClose();
@@ -100,7 +100,7 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
             {formatCurrency(stock.current_price)}
           </p>
           <p className={`text-xs md:text-sm ${stock.change >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-            {stock.change >= 0 ? '+' : ''}{formatCurrency(stock.change)} ({stock.change_percent.toFixed(2)}%)
+            {stock.change >= 0 ? '+' : ''}{formatCurrency(stock.change)} ({Number(stock.change_percent || 0).toFixed(2)}%)
           </p>
         </div>
 
@@ -141,8 +141,17 @@ export default function TradeModal({ stock, isOpen, onClose, onTradeComplete }: 
             type="number"
             min="1"
             max={tradeType === TransactionType.SELL ? maxSellShares : undefined}
-            value={shares}
-            onChange={(e) => setShares(Math.max(1, parseInt(e.target.value) || 1))}
+            value={shares || ''}
+            placeholder="Enter number of shares"
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === '') {
+                setShares(0);
+              } else {
+                const numValue = parseInt(value);
+                setShares(isNaN(numValue) ? 0 : Math.max(0, numValue));
+              }
+            }}
             className="w-full px-3 py-2 md:py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-700 dark:text-white text-sm md:text-base"
           />
           {tradeType === TransactionType.SELL && (

@@ -313,6 +313,7 @@ async def get_historical_data(symbol: str, period: str = "1mo") -> List[Historic
     time_series = data["Time Series (Daily)"]
     
     # Calculate date range based on period (add extra days to account for weekends)
+    end_date = datetime.utcnow()
     if period == "5d":
         start_date = end_date - timedelta(days=10)  # ~2 weeks to ensure 5 trading days
     elif period == "1mo":
