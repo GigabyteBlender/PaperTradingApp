@@ -22,13 +22,22 @@ export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
 
+  // Clear error when user starts typing
+  const handleInputChange = (setter: (value: string) => void, value: string) => {
+    setter(value);
+    if (error) {
+      setError('');
+    }
+  };
+
   /**
    * Handle form submission
    * Validates credentials and authenticates user
    */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError('');
+
+    if (isSubmitting) return; // Prevent double submission
 
     // Validate email format
     const emailValidation = validateEmail(email);
@@ -49,8 +58,7 @@ export default function LoginPage() {
     try {
       // Authenticate user via API
       await login({ email, password });
-      // Redirect to dashboard on success
-      router.push('/dashboard');
+      // AuthContext will handle redirect automatically
     } catch (err) {
       // Handle API errors
       if (err instanceof APIError) {
@@ -94,7 +102,7 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => handleInputChange(setEmail, e.target.value)}
                 className="w-full px-4 py-2.5 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 transition-colors"
                 placeholder="you@example.com"
                 disabled={isSubmitting}
@@ -111,7 +119,7 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => handleInputChange(setPassword, e.target.value)}
                 className="w-full px-4 py-2.5 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 transition-colors"
                 placeholder="••••••••"
                 disabled={isSubmitting}

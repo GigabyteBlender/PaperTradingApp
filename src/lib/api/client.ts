@@ -116,11 +116,15 @@ class APIClient {
         if (isJSON) {
           const errorData = await response.json();
           
-          // On 401, clear tokens and redirect to login
+          // On 401, clear tokens and redirect to login (but not if already on auth pages)
           if (response.status === 401) {
             tokenStorage.clearTokens();
             if (typeof window !== 'undefined') {
-              window.location.href = '/login';
+              const currentPath = window.location.pathname;
+              const isOnAuthPage = currentPath === '/login' || currentPath === '/signup';
+              if (!isOnAuthPage) {
+                window.location.href = '/login';
+              }
             }
           }
 

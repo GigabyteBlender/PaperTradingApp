@@ -24,13 +24,22 @@ export default function SignupPage() {
   const { signup } = useAuth();
   const router = useRouter();
 
+  // Clear error when user starts typing
+  const handleInputChange = (setter: (value: string) => void, value: string) => {
+    setter(value);
+    if (error) {
+      setError('');
+    }
+  };
+
   /**
    * Handle form submission
    * Validates all fields and creates new user account
    */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError('');
+
+    if (isSubmitting) return; // Prevent double submission
 
     // Validate email format
     const emailValidation = validateEmail(email);
@@ -65,8 +74,7 @@ export default function SignupPage() {
     try {
       // Create new user account via API
       await signup({ email, username, password });
-      // Redirect to dashboard on success
-      router.push('/dashboard');
+      // AuthContext will handle redirect automatically
     } catch (err) {
       // Handle API errors (e.g., email already exists)
       if (err instanceof APIError) {
@@ -110,7 +118,7 @@ export default function SignupPage() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => handleInputChange(setEmail, e.target.value)}
                 className="w-full px-4 py-2.5 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 transition-colors"
                 placeholder="you@example.com"
                 disabled={isSubmitting}
@@ -127,7 +135,7 @@ export default function SignupPage() {
                 id="username"
                 type="text"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => handleInputChange(setUsername, e.target.value)}
                 className="w-full px-4 py-2.5 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 transition-colors"
                 placeholder="johndoe"
                 disabled={isSubmitting}
@@ -145,7 +153,7 @@ export default function SignupPage() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => handleInputChange(setPassword, e.target.value)}
                 className="w-full px-4 py-2.5 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 transition-colors"
                 placeholder="••••••••"
                 disabled={isSubmitting}
@@ -164,7 +172,7 @@ export default function SignupPage() {
                 id="confirmPassword"
                 type="password"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={(e) => handleInputChange(setConfirmPassword, e.target.value)}
                 className="w-full px-4 py-2.5 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 transition-colors"
                 placeholder="••••••••"
                 disabled={isSubmitting}
