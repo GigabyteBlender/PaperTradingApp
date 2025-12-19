@@ -17,8 +17,7 @@ export default function GlossaryPage() {
       );
     }
 
-    // Search query provided: filter terms where the query appears in the
-    // term name (case-insensitive), then sort alphabetically
+    // Search query provided, filters terms based on query and then sort alphabetically
     return glossaryTerms
       .filter((term) => term.term.toLowerCase().includes(query))
       .sort((a, b) => a.term.localeCompare(b.term));

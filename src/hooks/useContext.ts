@@ -1,8 +1,8 @@
 import { useContext, Context } from 'react';
 
 /**
- * Factory function to create a context hook with automatic error handling.
- * Eliminates duplicate hook patterns across contexts.
+ * function to create a context hook with automatic error handling.
+ * Used to reduce duplicate code across the different contexts.
  */
 export function createContextHook<T>(
   context: Context<T | undefined>,
