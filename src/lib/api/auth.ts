@@ -47,7 +47,7 @@ export async function logout(): Promise<void> {
   try {
     await apiClient.post('/api/auth/logout');
   } finally {
-    // Always clear tokens even if API call fails
+    // Clear tokens even if API call fails
     tokenStorage.clearTokens();
   }
 }

@@ -14,7 +14,7 @@ async def get_stock_recommendation(
     current_user: dict = Depends(get_current_user)
 ):
     """
-    Get AI generated stock recommendation for a given symbol.
+    Get stock recommendation for a given symbol.
     Protected endpoint that analyzes stock data and returns buy/hold/sell guidance
     with scoring, reasoning, and key factors. Data is cached for 15 minutes.
     """

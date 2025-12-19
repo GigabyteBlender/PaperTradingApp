@@ -19,7 +19,7 @@ export default function StockChart({ stock }: StockChartProps) {
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const [error, setError] = useState<string | null>(null);
 
-    // Fetch historical data from API when timeframe or stock changes
+    // Fetch historical data when timeframe or stock changes
     useEffect(() => {
         const fetchHistoricalData = async () => {
             setError(null);
@@ -38,7 +38,7 @@ export default function StockChart({ stock }: StockChartProps) {
                 const period = periodMap[timeframe];
                 const history = await getStockHistory(stock.symbol, period);
                 
-                // Transform API response to chart data
+                // Transform response to chart data
                 const transformed: ChartData[] = history.map(item => {
                     const date = new Date(item.date);
                     let timeString = '';

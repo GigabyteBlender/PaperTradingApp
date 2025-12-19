@@ -7,7 +7,6 @@ export default function GlossaryPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter and sort terms based on search query
-  // When no search query is provided, display all terms alphabetically
   const filteredTerms = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
     

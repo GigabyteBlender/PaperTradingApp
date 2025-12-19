@@ -14,7 +14,6 @@ interface HoldingsTableProps {
 
 /**
  * HoldingsTable displays user portfolio holdings.
- * Data is fetched from backend API - no longer uses mock data.
  */
 export default function HoldingsTable({ portfolio, isLoading = false, onTradeComplete }: HoldingsTableProps) {
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);

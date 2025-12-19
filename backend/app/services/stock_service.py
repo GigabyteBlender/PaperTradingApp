@@ -157,7 +157,6 @@ async def get_stock_details(symbol: str) -> StockDetails:
     market_status_info = get_market_status()
     
     # Build the complete StockDetails object
-    # Combines real-time price data with company fundamentals
     details = StockDetails(
         symbol=symbol.upper(),
         name=overview_data.get("Name", symbol.upper()),

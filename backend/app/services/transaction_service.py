@@ -97,7 +97,6 @@ def create_transaction(
     """
     Create and execute a transaction with full validation and atomic processing.
     Validates balance/shares, creates transaction record, and updates balance and holdings.
-    All operations are atomic - if any step fails, no changes are persisted.
     """
     total_cost = shares * price
     

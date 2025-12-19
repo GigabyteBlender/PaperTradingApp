@@ -104,21 +104,21 @@ P/E Ratio: {stock_details.pe_ratio if stock_details.pe_ratio else 'N/A'}
 
 Consider the price movement, volume, and valuation metrics in your analysis."""
 
-    # Call OpenAI service to analyze the stock
+    # Call AI service to analyze the stock
     logger.info(f"Calling OpenAI API to analyze {symbol}")
     
     try:
         ai_response = await analyze_stock(prompt)
     except ValueError as e:
-        # Handle OpenAI response parsing errors
+        # Handle AI response parsing errors
         logger.error(f"OpenAI response parsing error for {symbol}: {str(e)}")
         raise Exception(f"Recommendation service unavailable - Invalid AI response: {str(e)}")
     except Exception as e:
-        # Handle OpenAI API errors
+        # Handle AI API errors
         logger.error(f"OpenAI API error for {symbol}: {str(e)}")
         raise Exception(f"Recommendation service unavailable - OpenAI API error: {str(e)}")
     
-    # Parse the AI response
+    # Parse AI response
     score = ai_response["score"]
     reasoning = ai_response["reasoning"]
     
@@ -131,7 +131,7 @@ Consider the price movement, volume, and valuation metrics in your analysis."""
     else:
         recommendation_type = "buy"
     
-    # Parse factors from AI response
+    # Parse factors from response
     factors = [
         Factor(
             name=f["name"],

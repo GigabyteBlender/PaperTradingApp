@@ -17,7 +17,7 @@ interface RecommendationCardProps {
 }
 
 /**
- * RecommendationCard displays AI-powered stock recommendations with visual indicators
+ * RecommendationCard displays stock recommendations with visual indicators
  * Matches the styling of existing market page components (StockStats, StockHeader)
  */
 export default function RecommendationCard({

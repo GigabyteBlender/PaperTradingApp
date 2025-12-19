@@ -74,7 +74,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950">
       <div className="w-full max-w-md mx-auto">
-        {/* Login card container */}
+
         <div className="rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-800 p-8 bg-white dark:bg-neutral-900">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white mb-2">
@@ -93,7 +93,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Email input field */}
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium mb-2 text-neutral-900 dark:text-white">
                 Email

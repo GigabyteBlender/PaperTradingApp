@@ -102,7 +102,7 @@ class APIClient {
     const url = `${this.baseURL}${endpoint}`;
 
     try {
-      // Make the fetch call with all config options (method, body, etc.) and headers
+      // Make the fetch call with config options and headers
       const response = await fetch(url, {
         ...restConfig, // Contains method, body, and other fetch options
         headers: requestHeaders,
@@ -183,7 +183,7 @@ class APIClient {
     return this.request<T>(endpoint, {
       ...config,
       method: 'POST',
-      body: data ? JSON.stringify(data) : undefined, // Converts { email, password } to JSON string
+      body: data ? JSON.stringify(data) : undefined,
     });
   }
 }
