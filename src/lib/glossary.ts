@@ -81,7 +81,7 @@ export const glossaryTerms: GlossaryTerm[] = [
   },
   {
     term: 'Breakout',
-    definition: 'When a stock price moves above a resistance level or below a support level, potentially signaling a new trend.',
+    definition: 'When a stock price moves above a resistance level or below a support level, potentially signalling a new trend.',
   },
   {
     term: 'Momentum',

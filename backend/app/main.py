@@ -1,6 +1,6 @@
 """
 FastAPI application entry point.
-Initializes the FastAPI app with CORS configuration and includes all routers.
+initialises the FastAPI app with CORS configuration and includes all routers.
 """
 
 from fastapi import FastAPI
@@ -24,7 +24,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 
-# Initialize FastAPI application
+# initialise FastAPI application
 app = FastAPI(
     title="backend",
     description="Backend API for my NEA",

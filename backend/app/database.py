@@ -1,13 +1,13 @@
 """
 Database connection using Supabase client.
-- Supabase client initialization
+- Supabase client initialisation
 - Helper function to get Supabase client instance
 """
 
 from supabase import create_client, Client
 from app.config import settings
 
-# Initialize Supabase client
+# initialise Supabase client
 # The client handles all database operations using Supabase's REST API
 supabase: Client = create_client(
     settings.SUPABASE_URL,

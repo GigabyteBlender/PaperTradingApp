@@ -15,7 +15,7 @@ async def get_stock_recommendation(
 ):
     """
     Get stock recommendation for a given symbol.
-    Protected endpoint that analyzes stock data and returns buy/hold/sell guidance
+    Protected endpoint that analyses stock data and returns buy/hold/sell guidance
     with scoring, reasoning, and key factors. Data is cached for 15 minutes.
     """
     try:

@@ -8,7 +8,7 @@ A full-stack trading application built with Next.js and FastAPI, featuring real-
 - **Next.js 15** with React 19
 - **TypeScript** for type safety
 - **Tailwind CSS 4** for styling
-- **Recharts** for data visualization
+- **Recharts** for data visualisation
 - **Lucide React** for icons
 
 ### Backend

@@ -11,13 +11,13 @@ from app.schemas.recommendation import Factor
 
 logger = logging.getLogger(__name__)
 
-# Initialize OpenAI client with API key from settings
+# initialise OpenAI client with API key from settings
 _openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
 
 async def analyze_stock(prompt: str) -> Dict[str, Any]:
     """
-    Analyze stock data using OpenAI and return structured recommendation.
+    analyse stock data using OpenAI and return structured recommendation.
     """
     try:
         # Define the response schema
@@ -59,7 +59,7 @@ async def analyze_stock(prompt: str) -> Dict[str, Any]:
             }
         }
 
-        system_prompt = """You are a financial analyst AI. Analyze the stock data and provide:
+        system_prompt = """You are a financial analyst AI. analyse the stock data and provide:
 - score: integer 0-100 (0-33=sell, 34-66=hold, 67-100=buy)  
 - reasoning: 2-3 sentence explanation
 - factors: 1-5 key factors with name, description, and impact (positive/neutral/negative)

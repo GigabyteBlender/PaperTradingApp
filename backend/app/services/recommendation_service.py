@@ -53,11 +53,8 @@ class RecommendationCache:
             "expires_at": datetime.utcnow() + self.ttl[data_type]
         }
 
-
 # Global cache instance
 _recommendation_cache = RecommendationCache()
-
-
 
 async def get_recommendation(symbol: str) -> Recommendation:
     """
